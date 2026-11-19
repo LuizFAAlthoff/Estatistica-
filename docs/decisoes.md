@@ -50,21 +50,27 @@ Métricas de comparação usadas pelo professor: **EAM** (erro absoluto médio) 
 | D04 | 19/11/2026 | 1.5 | **Frequência:** a série diária será trabalhada em escala **mensal**. | Diária | Na escala mensal o ciclo sazonal anual fica visível e os modelos da disciplina se aplicam diretamente (frequência 12). |
 | D05 | 19/11/2026 | 1.5 | **Variável resposta:** **ENA bruta, em MWmed**. A necessidade de transformação (ex.: logaritmo) será avaliada mais adiante. | ENA em % da MLT (média de longo termo) | A % da MLT divide cada valor pela média histórica do mês, o que remove parte da sazonalidade por construção e prejudica os modelos sazonais exigidos. A ENA bruta mantém a unidade física de interesse. |
 | D06 | 19/11/2026 | 1.2 | **Objetivo:** **prever** a ENA mensal e **explicar** o comportamento dos modelos, ou seja, por que cada modelo se sai melhor ou pior com essa série. Uma possível explicação climática (El Niño/La Niña) fica em aberto. | Somente previsão; somente explicação | O enunciado exige aplicar e comparar todos os modelos (previsão). A discussão de por que cada modelo funciona ou não dá profundidade à seção de Resultados e discussões. |
-| D07 | 19/11/2026 | 1.4 / 5 | **Regressão:** a regressão deve incluir a **tendência** e uma **variável climática defasada do El Niño** (opção B). *Pendente: detalhes na Q3 da rodada 4.* | (A) só tendência e sazonalidade; (C) incluir chuva; (D) incluir variáveis hidrológicas | Usar o El Niño defasado permite que a regressão sirva para previsão, porque o valor passado já é conhecido no momento de prever. |
+| D07 | 19/11/2026 | 1.4 / 5 | **Regressão:** a regressão terá **tendência + *dummies* de mês + El Niño defasado**. As *dummies* são variáveis indicadoras 0/1, uma por mês, que capturam a sazonalidade. | (A) só tendência e *dummies*; (C) incluir chuva; (D) incluir variáveis hidrológicas | As *dummies* representam o ciclo sazonal hidrológico, como na Aula 22 (`lm(total ~ month)`). O El Niño defasado permite usar a regressão para previsão, porque o valor passado já é conhecido no momento de prever. |
 | D08 | 19/11/2026 | 1.7 / 6 | **Validação:** reservar os **últimos 12 meses** da série como conjunto de **teste**. | 24 ou 36 meses | Doze meses correspondem a um ciclo hidrológico completo e seguem o exemplo da aula de suavização. |
 | D09 | 19/11/2026 | 1.7 | **Métricas de comparação:** **EAM** e **RMSE**. | Incluir MAPE | São as métricas usadas pelo professor na disciplina. |
-| D10 | 19/11/2026 | 1.5 | **Período:** de **janeiro de 2000** até o dado **mais recente** disponível. | Começar em 2014/2015; fechar em dezembro de 2025 | Usa todo o histórico disponível. *Pendente: tratamento do mês incompleto (Q2 da rodada 4).* |
+| D10 | 19/11/2026 | 1.5 | **Período:** de **janeiro de 2000** até o **último mês completo** disponível. Os 12 meses de teste (D08) são os 12 últimos meses completos. | Começar em 2014/2015; fechar em dezembro de 2025; incluir o mês corrente incompleto | Usa todo o histórico disponível. Um mês incompleto distorceria a média mensal justamente no período de teste. |
 | D11 | 19/11/2026 | 7.1 | **Redação:** **R Markdown (`.Rmd`) → DOCX → PDF**. Um documento Word de referência aplicará a formatação exigida. | Markdown puro; Google Docs; LaTeX | Gráficos, tabelas e o anexo com a sintaxe R são gerados automaticamente a partir do código. Todos os membros têm R instalado. |
 | D12 | 19/11/2026 | 0.2 | **Divisão do trabalho** por blocos (ver abaixo). Na prática, é provável que uma pessoa conduza a maior parte do projeto. | — | Prazo curto (5 dias). |
+| D13 | 19/11/2026 | 1.5 / 2 | **Indicador do El Niño:** índice **ONI** (*Oceanic Niño Index*) da NOAA. | Niño 3.4 mensal sem suavização | É o índice oficial e o mais citado na literatura, o que facilita justificar e referenciar. |
+| D14 | 19/11/2026 | 3 | **Defasagem do ONI:** escolhida na **análise exploratória**, usando a defasagem com **maior correlação** com a ENA. | Fixar um valor da literatura | Deixa os dados indicarem a defasagem relevante para a bacia do Grande. O valor escolhido será registrado como nova decisão. |
+| D15 | 19/11/2026 | 1.4 | **Hipótese climática:** o El Niño/La Niña (ONI defasado) influencia a ENA da bacia do Grande. **H₀:** o coeficiente do ONI na regressão é zero. Se não houver evidência de relação, o ONI **sai do modelo final**, e esse resultado é reportado na discussão. | Manter o ONI mesmo sem significância | O El Niño entra como **hipótese** do problema, e não como premissa. A regressão não remove variáveis sozinha; a remoção é uma decisão tomada pelo teste do coeficiente ou pela seleção de variáveis vista na disciplina. *Pendente: critério exato (Q1 da rodada 5).* |
+| D16 | 19/11/2026 | 1.6 | **Tipo de estudo:** **observacional** e **longitudinal** (série temporal), com **dados secundários públicos** (ONS e NOAA). | — | Não há intervenção nem coleta própria. Dados públicos dispensam aprovação de comitê de ética. |
 
 ### Divisão do trabalho (D12)
 
 | Bloco | Responsável | Conteúdo | Prazo-alvo |
 |-------|-------------|----------|-----------|
-| A | *(a definir)* | Obter e preparar os dados, análise exploratória, decomposição, estacionariedade | 20/11 |
-| B | *(a definir)* | Suavização exponencial: SES, Holt, Holt-Winters, ETS | 21–22/11 |
-| C | *(a definir)* | AR, MA, ARIMA, SARIMA | 21–22/11 |
-| D | *(a definir)* | Regressão; redação de Introdução e Métodos | 21–22/11 |
+| A | Luiz | Obter e preparar os dados, análise exploratória, decomposição, estacionariedade; coordenação | 20/11 |
+| B | Bruno | Suavização exponencial: SES, Holt, Holt-Winters, ETS | 21–22/11 |
+| C | Francisco | AR, MA, ARIMA, SARIMA | 21–22/11 |
+| D | Jullya | Regressão; redação de Introdução e Métodos | 21–22/11 |
+
+**Membros do grupo:** Bruno, Francisco, Jullya e Luiz. A atribuição dos blocos é uma proposta inicial e pode ser trocada.
 | Todos | — | Comparação dos modelos, Resultados e discussões, Considerações finais | 22–23/11 |
 | — | — | Geração do PDF final e entrega no Moodle | 24/11 |
 
@@ -72,7 +78,5 @@ Métricas de comparação usadas pelo professor: **EAM** (erro absoluto médio) 
 
 ## Pendências da etapa 1
 
-- Q1 (rodada 4): significado de *dummies* e confirmação de como a sazonalidade entra na regressão.
-- Q2 (rodada 4): o que fazer com o mês corrente, que está incompleto.
-- Q3 (rodada 4): qual indicador do El Niño usar e como escolher a defasagem.
-- Q4 (rodada 4): nomes dos membros (para a seção de identificação e a divisão do trabalho).
+- Q1 (rodada 5): critério para manter ou descartar o ONI, e nível de significância.
+- Q2 (rodada 5): incluir ou não modelos de referência além dos da disciplina.
