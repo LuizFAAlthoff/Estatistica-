@@ -151,9 +151,7 @@ trabalhoestatistica/
 
 ## Registro de Decisões
 
-| Data | Etapa | Decisão | Justificativa |
-|------|-------|---------|---------------|
-|      |       |         |               |
+Todas as decisões estão em [docs/decisoes.md](docs/decisoes.md).
 
 ## Pendências / Perguntas em aberto
 
