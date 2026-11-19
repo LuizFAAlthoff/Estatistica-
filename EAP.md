@@ -25,22 +25,22 @@ O que **não** se transfere ao pé da letra:
 
 ## 0. Gerenciamento do Projeto
 
-- [ ] **0.1 Escopo e requisitos da disciplina** – enunciado, critérios de avaliação, formato de entrega, prazo
-- [ ] **0.2 Equipe e responsabilidades** – quem faz o quê em cada etapa
-- [ ] **0.3 Cronograma** – datas-alvo por etapa (ver tabela abaixo)
-- [ ] **0.4 Ambiente e ferramentas** – R ou Python, notebook (Jupyter/Quarto/RMarkdown), repositório compartilhado
+- [x] **0.1 Escopo e requisitos da disciplina** – enunciado, critérios de avaliação, formato de entrega, prazo
+- [x] **0.2 Equipe e responsabilidades** – quem faz o quê em cada etapa
+- [x] **0.3 Cronograma** – datas-alvo por etapa (ver tabela abaixo)
+- [x] **0.4 Ambiente e ferramentas** – R, R Markdown e repositório no GitHub
 
 **Entregável:** este documento preenchido + estrutura de pastas do projeto.
 
 ## 1. Definir o Problema *(Observar o Panorama Geral)*
 
-- [ ] **1.1 Tema e contexto** – qual fenômeno vamos estudar e por que importa
-- [ ] **1.2 Objetivo geral e objetivos específicos**
-- [ ] **1.3 Perguntas de pesquisa** – 2 a 4 perguntas claras e respondíveis com dados
-- [ ] **1.4 Hipóteses** – H₀ e H₁ para cada pergunta (definidas *antes* de explorar os dados)
-- [ ] **1.5 População, unidade de análise e variáveis de interesse** – variável(is) resposta e explicativas
-- [ ] **1.6 Tipo de estudo** – observacional × experimental; transversal × longitudinal
-- [ ] **1.7 Critérios de avaliação** *(≈ "métrica de desempenho")* – nível de significância (α), tamanho de efeito relevante, IC desejado, R²/métricas se houver modelo
+- [x] **1.1 Tema e contexto** – ENA da bacia do Rio Grande (D03)
+- [x] **1.2 Objetivo geral e objetivos específicos** – prever e explicar (D06, D21)
+- [x] **1.3 Perguntas de pesquisa** – transformadas em objetivos específicos (D21)
+- [x] **1.4 Hipóteses** – não haverá seção de hipóteses (D21)
+- [x] **1.5 Variáveis de interesse** – ENA bruta mensal em MWmed; explicativas: INMET e ONI defasados (D05, D07, D13)
+- [x] **1.6 Tipo de estudo** – observacional, longitudinal, dados secundários (D16)
+- [x] **1.7 Critérios de avaliação** – últimos 12 meses como teste; EAM e RMSE (D08, D09). O α ficou adiado para D17.
 
 **Entregável:** *Documento de definição do problema* (1 página).
 
@@ -126,14 +126,14 @@ O que **não** se transfere ao pé da letra:
 
 | Etapa | Responsável | Início | Fim | Status |
 |-------|-------------|--------|-----|--------|
-| 0. Gerenciamento        |  |  |  | ⬜ |
-| 1. Definir o Problema   |  |  |  | ⬜ |
-| 2. Obter os Dados       |  |  |  | ⬜ |
-| 3. Análise Exploratória |  |  |  | ⬜ |
-| 4. Preparar os Dados    |  |  |  | ⬜ |
-| 5. Inferência/Modelagem |  |  |  | ⬜ |
-| 6. Validar e Refinar    |  |  |  | ⬜ |
-| 7. Comunicar Resultados |  |  |  | ⬜ |
+| 0. Gerenciamento        | Luiz | 19/11 | 19/11 | ✅ |
+| 1. Definir o Problema   | Luiz | 19/11 | 19/11 | ✅ |
+| 2. Obter os Dados       | Luiz | 20/11 | 20/11 | ⬜ |
+| 3. Análise Exploratória | Luiz | 20/11 | 20/11 | ⬜ |
+| 4. Preparar os Dados    | Luiz | 20/11 | 21/11 | ⬜ |
+| 5. Modelagem            | Bruno, Francisco, Jullya | 21/11 | 22/11 | ⬜ |
+| 6. Validar e Refinar    | Bruno, Francisco, Jullya | 22/11 | 22/11 | ⬜ |
+| 7. Comunicar Resultados | Todos | 22/11 | 24/11 | ⬜ |
 
 ## Estrutura de pastas sugerida
 
@@ -155,6 +155,4 @@ Todas as decisões estão em [docs/decisoes.md](docs/decisoes.md).
 
 ## Pendências / Perguntas em aberto
 
-- Qual é o enunciado/requisitos do professor de estatística (formato, prazo, técnicas obrigatórias)?
-- Qual o tema e a base de dados?
-- ~~R ou Python?~~ → **R** (repositório Git iniciado com estrutura para R)
+Ver o [README](README.md) (próximos passos) e as decisões adiadas D17 e D20 em [docs/decisoes.md](docs/decisoes.md).
