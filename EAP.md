@@ -26,7 +26,7 @@ O que **não** se transfere ao pé da letra:
 ## 0. Gerenciamento do Projeto
 
 - [x] **0.1 Escopo e requisitos da disciplina** – enunciado, critérios de avaliação, formato de entrega, prazo
-- [x] **0.2 Equipe e responsabilidades** – quem faz o quê em cada etapa
+- [ ] **0.2 Equipe e responsabilidades** – membros definidos (Bruno, Francisco, Jullya, Luiz); a divisão de tarefas ainda não foi combinada
 - [x] **0.3 Cronograma** – datas-alvo por etapa (ver tabela abaixo)
 - [x] **0.4 Ambiente e ferramentas** – R, R Markdown e repositório no GitHub
 
@@ -124,16 +124,16 @@ O que **não** se transfere ao pé da letra:
 
 ## Cronograma
 
-| Etapa | Responsável | Início | Fim | Status |
-|-------|-------------|--------|-----|--------|
-| 0. Gerenciamento        | Luiz | 19/11 | 19/11 | ✅ |
-| 1. Definir o Problema   | Luiz | 19/11 | 19/11 | ✅ |
-| 2. Obter os Dados       | Luiz | 20/11 | 20/11 | ⬜ |
-| 3. Análise Exploratória | Luiz | 20/11 | 20/11 | ⬜ |
-| 4. Preparar os Dados    | Luiz | 20/11 | 21/11 | ⬜ |
-| 5. Modelagem            | Bruno, Francisco, Jullya | 21/11 | 22/11 | ⬜ |
-| 6. Validar e Refinar    | Bruno, Francisco, Jullya | 22/11 | 22/11 | ⬜ |
-| 7. Comunicar Resultados | Todos | 22/11 | 24/11 | ⬜ |
+| Etapa | Início | Fim | Status |
+|-------|--------|-----|--------|
+| 0. Gerenciamento        | 19/11 | 19/11 | ✅ |
+| 1. Definir o Problema   | 19/11 | 19/11 | ✅ |
+| 2. Obter os Dados       | 20/11 | 20/11 | ⬜ |
+| 3. Análise Exploratória | 20/11 | 20/11 | ⬜ |
+| 4. Preparar os Dados    | 20/11 | 21/11 | ⬜ |
+| 5. Modelagem            | 21/11 | 22/11 | ⬜ |
+| 6. Validar e Refinar    | 22/11 | 22/11 | ⬜ |
+| 7. Comunicar Resultados | 22/11 | 24/11 | ⬜ |
 
 ## Estrutura de pastas sugerida
 

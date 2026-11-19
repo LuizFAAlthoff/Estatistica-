@@ -55,7 +55,7 @@ Métricas de comparação usadas pelo professor: **EAM** (erro absoluto médio) 
 | D09 | 19/11/2026 | 1.7 | **Métricas de comparação:** **EAM** e **RMSE**. | Incluir MAPE | São as métricas usadas pelo professor na disciplina. |
 | D10 | 19/11/2026 | 1.5 | **Período:** de **janeiro de 2000** até o **último mês completo** disponível. Os 12 meses de teste (D08) são os 12 últimos meses completos. | Começar em 2014/2015; fechar em dezembro de 2025; incluir o mês corrente incompleto | Usa todo o histórico disponível. Um mês incompleto distorceria a média mensal justamente no período de teste. |
 | D11 | 19/11/2026 | 7.1 | **Redação:** **R Markdown (`.Rmd`) → DOCX → PDF**. Um documento Word de referência aplicará a formatação exigida. | Markdown puro; Google Docs; LaTeX | Gráficos, tabelas e o anexo com a sintaxe R são gerados automaticamente a partir do código. Todos os membros têm R instalado. |
-| D12 | 19/11/2026 | 0.2 | **Divisão do trabalho** por blocos (ver abaixo). Na prática, é provável que uma pessoa conduza a maior parte do projeto. | — | Prazo curto (5 dias). |
+| D12 | 19/11/2026 *(revisada)* | 0.2 | **Divisão do trabalho:** o trabalho foi organizado em blocos (ver abaixo), mas **a atribuição de responsáveis ainda não foi combinada** com o grupo. | Atribuir nomes já na etapa 1 | A atribuição precisa ser acordada entre os membros. |
 | D13 | 19/11/2026 | 1.5 / 2 | **Indicador do El Niño:** índice **ONI** (*Oceanic Niño Index*) da NOAA. | Niño 3.4 mensal sem suavização | É o índice oficial e o mais citado na literatura, o que facilita justificar e referenciar. |
 | D14 | 19/11/2026 | 3 | **Defasagem do ONI:** escolhida na **análise exploratória**, usando a defasagem com **maior correlação** com a ENA. | Fixar um valor da literatura | Deixa os dados indicarem a defasagem relevante para a bacia do Grande. O valor escolhido será registrado como nova decisão. |
 | D15 | 19/11/2026 *(revisada)* | 1.4 | **ONI como variável candidata:** o El Niño/La Niña entra na regressão como **candidato**. Se a seleção de variáveis (D17) não indicar relação, o ONI **sai do modelo final**, e esse resultado é relatado na discussão. | Tratar como hipótese formal a ser provada | O trabalho não terá seção de hipóteses (D21). A regressão não remove variáveis sozinha; o critério de remoção fica em D17. |
@@ -76,16 +76,16 @@ Métricas de comparação usadas pelo professor: **EAM** (erro absoluto médio) 
 
 ### Divisão do trabalho (D12)
 
-**Membros do grupo:** Bruno, Francisco, Jullya e Luiz. A atribuição dos blocos é uma proposta inicial e pode ser trocada.
+**Membros do grupo:** Bruno, Francisco, Jullya e Luiz. A divisão de tarefas ainda não foi combinada.
 
-| Bloco | Responsável | Conteúdo | Prazo-alvo |
-|-------|-------------|----------|-----------|
-| A | Luiz | Obter e preparar os dados (ONS, INMET, NOAA), análise exploratória, decomposição, estacionariedade; coordenação | 20/11 |
-| B | Bruno | Suavização exponencial: SES, Holt, Holt-Winters, ETS | 21–22/11 |
-| C | Francisco | AR, MA, ARIMA, SARIMA | 21–22/11 |
-| D | Jullya | Regressão; redação de Introdução e Métodos | 21–22/11 |
-| Todos | — | Comparação dos modelos, Resultados e discussões, Considerações finais | 22–23/11 |
-| — | — | Geração do PDF final e entrega no Moodle | 24/11 |
+| Bloco | Conteúdo | Prazo-alvo |
+|-------|----------|-----------|
+| A | Obter e preparar os dados (ONS, INMET, NOAA), análise exploratória, decomposição, estacionariedade | 20–21/11 |
+| B | Suavização exponencial: SES, Holt, Holt-Winters, ETS | 21–22/11 |
+| C | AR, MA, ARIMA, SARIMA | 21–22/11 |
+| D | Regressão e ingênuo sazonal | 21–22/11 |
+| E | Redação: Introdução, Métodos, comparação dos modelos, Resultados e discussões, Considerações finais | 22–23/11 |
+| F | Geração do PDF final e entrega no Moodle | 24/11 |
 
 ---
 

@@ -49,16 +49,16 @@ Estes pontos dependem de conhecer os dados e serão decididos nas próximas etap
 
 O plano completo, etapa por etapa, está na **[EAP.md](EAP.md)**.
 
-| Quando | Etapa | O que fazer | Responsável |
-|--------|-------|-------------|-------------|
-| 20/11 | 2. Obter os dados | Baixar a ENA (ONS), os dados do INMET e o ONI (NOAA); montar o dicionário de dados | Luiz |
-| 20/11 | 3. Análise exploratória | Gráficos, decomposição, estacionariedade, correlações e defasagens; resolver D14, D20 e D05 | Luiz |
-| 21/11 | 4. Preparar os dados | Base mensal final, separação treino/teste | Luiz |
-| 21–22/11 | 5–6. Modelos | **Bruno:** SES, Holt, Holt-Winters, ETS · **Francisco:** AR, MA, ARIMA, SARIMA · **Jullya:** regressão (resolver D17) | Bruno, Francisco, Jullya |
-| 22–23/11 | 7. Redação | Comparação dos modelos, Resultados e discussões, Considerações finais (**Jullya:** Introdução e Métodos) | Todos |
-| 24/11 | Entrega | Gerar o PDF final e postar no Moodle | — |
+| Quando | Etapa | O que fazer |
+|--------|-------|-------------|
+| 20/11 | 2. Obter os dados | Baixar a ENA (ONS), os dados do INMET e o ONI (NOAA); montar o dicionário de dados |
+| 20/11 | 3. Análise exploratória | Gráficos, decomposição, estacionariedade, correlações e defasagens; resolver D14, D20 e D05 |
+| 21/11 | 4. Preparar os dados | Base mensal final; separação em treino e teste |
+| 21–22/11 | 5–6. Modelos | Suavização (SES, Holt, Holt-Winters, ETS); AR, MA, ARIMA, SARIMA; regressão (resolver D17); ingênuo sazonal |
+| 22–23/11 | 7. Redação | Introdução, Métodos, comparação dos modelos, Resultados e discussões, Considerações finais |
+| 24/11 | Entrega | Gerar o PDF final e postar no Moodle |
 
-> A divisão é uma proposta e pode ser trocada. Os blocos de modelos (Bruno, Francisco, Jullya) só começam depois que a base de dados estiver pronta.
+> A divisão de tarefas entre os membros ainda não foi combinada. Os modelos só podem começar depois que a base de dados estiver pronta.
 
 ## 5. Organização do repositório
 
