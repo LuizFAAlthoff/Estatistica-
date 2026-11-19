@@ -1,0 +1,30 @@
+# R / RStudio
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+.Renviron
+renv/library/
+renv/staging/
+
+# Quarto / RMarkdown
+/.quarto/
+*_cache/
+*_files/
+*.knit.md
+*.utf8.md
+
+# Python (caso usem)
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+
+# Dados grandes (descomente se a base for pesada ou sensível)
+# data/raw/
