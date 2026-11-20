@@ -28,6 +28,12 @@
 
 **Ponto de atenção:** a lista de bacias mudou com o tempo. Eram 24 em 2000, 23 em 2025 e 35 em 2026. Em 2026 aparecem bacias novas, como MADEIRA, XINGU e ANTAS, e em 2025 sumiram OUTRAS-SUDESTE e OUTRAS-SUL. A GRANDE mantém o nome em todos os anos. No download completo, é preciso conferir se a série não dá um salto na virada de 2025 para 2026, o que indicaria uma mudança na definição da bacia.
 
+**Verificação feita em 20/11/2026, com a série completa de 2010 a 2026: não houve mudança de patamar.**
+
+- **A série diária é contínua.** São 6.166 dias, de 01/01/2010 a 18/11/2026, sem dias faltando, datas repetidas ou valores ausentes. Na virada do ano, a ENA bruta passa de 2.579 MWmed (31/12/2025) para 2.636 MWmed (01/01/2026), sem salto.
+- **A MLT implícita mostra só revisões pequenas.** A MLT implícita é a ENA bruta dividida pela % da MLT. Se o ONS tivesse mudado a área da bacia, a MLT do mesmo mês mudaria de um ano para o outro. Até 2025, ela varia no máximo 1,1% de um ano para o outro. Em 2026, varia de −1,3% a +4,8%, com as maiores diferenças de agosto a outubro. As bacias PARANAIBA, PARANA e SAO FRANCISCO mostram o mesmo padrão, o que indica uma **revisão geral da média histórica feita pelo ONS**, e não uma mudança na bacia GRANDE. Essa revisão só afeta a coluna em % da MLT, que não é usada (D05).
+- **2026 fica dentro da faixa histórica de jan a ago.** Em set e out/2026, a ENA ficou bem acima da média do mesmo mês (223% e 197% da média de 2010–2025). São valores altos, mas sem sinal de erro, e caem no **período de teste**. É bom observá-los na análise exploratória e lembrar deles ao comparar as previsões.
+
 ## 2. ONI — CPC/NOAA (D13, D24)
 
 **Arquivo:** `https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt`. É texto separado por espaços, com cabeçalho.
@@ -106,7 +112,7 @@
 | A570 | Oliveira | MG | 2017 | 96 |
 | A770 | São Simão | SP | 2019 | 92 |
 
-São cerca de 19 estações, mas só Franca tem dados antes de 2006. Elas também têm entre 3% e 31% das horas sem registro de chuva.
+São cerca de 19 estações, mas só Franca tem dados antes de 2006. **O grupo decidiu aceitar essa classificação aproximada, sem verificar com o contorno oficial da bacia (20/11/2026).** Isso entra como limitação na discussão. Elas também têm entre 3% e 31% das horas sem registro de chuva.
 
 ### 3.3 Escolha entre convencionais e automáticas
 

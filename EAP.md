@@ -47,10 +47,10 @@ O que **não** se transfere ao pé da letra:
 ## 2. Obter os Dados
 
 - [x] **2.1 Identificar fontes** – ENA diária por bacia (ONS), estações convencionais do INMET via BDMEP e ONI do CPC/NOAA (D22–D24)
-- [ ] **2.2 Plano amostral** – tipo de amostragem, tamanho da amostra, cálculo de *n* (se coleta própria)
-- [ ] **2.3 Verificar adequação dos dados** – ENA e ONI verificados; INMET: estações automáticas desde 2010 (D25, D26) (ver [docs/verificacao-dados.md](docs/verificacao-dados.md))
+- [x] **2.2 Plano amostral** – não se aplica: são dados secundários e a série é usada inteira, sem sorteio nem coleta própria. A cobertura é definida pelo período (D26) e pelas estações (D25, D27).
+- [x] **2.3 Verificar adequação dos dados** – ENA (sem mudança de patamar em 2026) e ONI verificados; INMET: estações automáticas desde 2010 (D25, D26), com classificação aproximada das estações na bacia (ver [docs/verificacao-dados.md](docs/verificacao-dados.md))
 - [x] **2.4 Aquisição e armazenamento** – dados brutos em `data/raw/` (ons, noaa, inmet), fora do Git
-- [x] **2.5 Ética e sensibilidade** – anonimizar dados pessoais, licença de uso, TCLE se houver questionário
+- [x] **2.5 Ética e sensibilidade** – não se aplica: são dados públicos e agregados (ONS, NOAA, INMET), sem dados pessoais nem questionário, então não há anonimização, TCLE nem comitê de ética (D16). Basta citar as fontes nas Referências.
 - [x] **2.6 Dicionário de dados** – nome, descrição, tipo, unidade, valores possíveis
 - [x] **2.7 Automatizar a obtenção** – `R/01_baixar_dados.R` baixa ENA, ONI e INMET de 2010 até o ano atual
 
@@ -128,7 +128,7 @@ O que **não** se transfere ao pé da letra:
 |-------|--------|-----|--------|
 | 0. Gerenciamento        | 19/11 | 19/11 | ✅ |
 | 1. Definir o Problema   | 19/11 | 19/11 | ✅ |
-| 2. Obter os Dados       | 20/11 | 20/11 | ⬜ |
+| 2. Obter os Dados       | 20/11 | 20/11 | ✅ |
 | 3. Análise Exploratória | 20/11 | 20/11 | ⬜ |
 | 4. Preparar os Dados    | 20/11 | 21/11 | ⬜ |
 | 5. Modelagem            | 21/11 | 22/11 | ⬜ |
