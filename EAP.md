@@ -48,11 +48,11 @@ O que **não** se transfere ao pé da letra:
 
 - [x] **2.1 Identificar fontes** – ENA diária por bacia (ONS), estações convencionais do INMET via BDMEP e ONI do CPC/NOAA (D22–D24)
 - [ ] **2.2 Plano amostral** – tipo de amostragem, tamanho da amostra, cálculo de *n* (se coleta própria)
-- [ ] **2.3 Verificar adequação dos dados** – qualitativa (têm as variáveis certas?) e quantitativamente (*n* suficiente?)
-- [ ] **2.4 Aquisição e armazenamento** – baixar/coletar, converter para formato conveniente (CSV), guardar versão bruta intocada
+- [ ] **2.3 Verificar adequação dos dados** – ENA e ONI verificados; INMET: estações automáticas desde 2010 (D25, D26) (ver [docs/verificacao-dados.md](docs/verificacao-dados.md))
+- [x] **2.4 Aquisição e armazenamento** – dados brutos em `data/raw/` (ons, noaa, inmet), fora do Git
 - [ ] **2.5 Ética e sensibilidade** – anonimizar dados pessoais, licença de uso, TCLE se houver questionário
 - [ ] **2.6 Dicionário de dados** – nome, descrição, tipo, unidade, valores possíveis
-- [ ] **2.7 Automatizar a obtenção** – script que baixa/lê os dados do zero
+- [x] **2.7 Automatizar a obtenção** – `R/01_baixar_dados.R` baixa ENA, ONI e INMET de 2010 até o ano atual
 
 **Entregável:** base bruta + dicionário de dados + script de obtenção.
 

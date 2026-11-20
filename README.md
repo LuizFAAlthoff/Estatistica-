@@ -5,7 +5,7 @@ Trabalho da disciplina **INE5649 – Técnicas Estatísticas de Predição** (UF
 **Grupo:** Bruno, Francisco, Jullya e Luiz
 **Entrega:** **24/11/2026**, resumo expandido em PDF no Moodle (só um integrante posta).
 
-> **Estado atual (19/11):** a **etapa 1 — definição do problema — está concluída**. Ainda **não há dados nem código**. O próximo passo é obter os dados (etapa 2).
+> **Estado atual (19/11):** a etapa 1 (definição do problema) está concluída. Na etapa 2, as fontes estão definidas (D22, D24, D25), os dados foram verificados ([docs/verificacao-dados.md](docs/verificacao-dados.md)) e o download está automatizado (`R/01_baixar_dados.R`).
 
 ---
 
@@ -22,7 +22,7 @@ Cada decisão está registrada com alternativas e justificativa em **[docs/decis
 | Item | Decisão |
 |------|---------|
 | Variável estudada | **ENA bruta** da bacia do Rio Grande, em MWmed. Os dados diários do ONS são convertidos para **média mensal**. |
-| Período | De **jan/2000** até o **último mês completo** disponível |
+| Período | De **jan/2010** até o **último mês completo** disponível (D26; antes de 2010 quase não há estações automáticas do INMET na bacia) |
 | Teste | Os **últimos 12 meses** ficam separados para comparar as previsões |
 | Métricas | **EAM** (erro absoluto médio) e **RMSE** (raiz do erro quadrático médio) |
 | Modelos | Regressão; SES, Holt, Holt-Winters, ETS; AR, MA, ARIMA, SARIMA; mais o **ingênuo sazonal** como referência mínima |
@@ -79,5 +79,6 @@ O plano completo, etapa por etapa, está na **[EAP.md](EAP.md)**.
 
 1. Clone o repositório: `git clone https://github.com/LuizFAAlthoff/Estatistica-.git`
 2. Antes de começar, rode **`git pull`** para pegar a versão mais recente.
-3. Mexa nos arquivos do seu bloco, faça commits pequenos com mensagens claras e envie com `git push`.
-4. Toda decisão nova (variável, defasagem, transformação, modelo descartado) vai para o **[docs/decisoes.md](docs/decisoes.md)** com uma justificativa, para não se perder na hora de escrever o resumo.
+3. **Baixe os dados** (só na primeira vez; leva alguns minutos e ocupa ~1,5 GB). Na pasta raiz do repositório, rode `Rscript R/01_baixar_dados.R`, ou abra o arquivo no RStudio e clique em *Source*. Os dados ficam em `data/raw/`, que não vai para o GitHub.
+4. Mexa nos arquivos do seu bloco, faça commits pequenos com mensagens claras e envie com `git push`.
+5. Toda decisão nova (variável, defasagem, transformação, modelo descartado) vai para o **[docs/decisoes.md](docs/decisoes.md)** com uma justificativa, para não se perder na hora de escrever o resumo.

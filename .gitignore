@@ -28,3 +28,8 @@ desktop.ini
 
 # Dados grandes (descomente se a base for pesada ou sensível)
 # data/raw/
+
+# Dados brutos baixados: são recriados por R/01_baixar_dados.R
+# (os zips do INMET somam ~1,5 GB e não cabem no GitHub)
+data/raw/*
+!data/raw/.gitkeep
