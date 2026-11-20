@@ -46,7 +46,7 @@ O que **não** se transfere ao pé da letra:
 
 ## 2. Obter os Dados
 
-- [ ] **2.1 Identificar fontes** – dados públicos (IBGE, DATASUS, INEP, Kaggle…), coleta própria (questionário) ou base fornecida
+- [x] **2.1 Identificar fontes** – ENA diária por bacia (ONS), estações convencionais do INMET via BDMEP e ONI do CPC/NOAA (D22–D24)
 - [ ] **2.2 Plano amostral** – tipo de amostragem, tamanho da amostra, cálculo de *n* (se coleta própria)
 - [ ] **2.3 Verificar adequação dos dados** – qualitativa (têm as variáveis certas?) e quantitativamente (*n* suficiente?)
 - [ ] **2.4 Aquisição e armazenamento** – baixar/coletar, converter para formato conveniente (CSV), guardar versão bruta intocada
