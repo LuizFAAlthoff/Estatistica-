@@ -1,0 +1,244 @@
+---
+title: "Análise Exploratória dos Dados (EDA) - ENA Bacia do Rio Grande"
+author: "Grupo INE5649 (Bruno, Francisco, Jullya e Luiz)"
+date: "2026-11-20"
+output:
+  pdf_document:
+    toc: true
+    latex_engine: xelatex
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+geometry: margin=2cm
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 7,
+  fig.height = 4,
+  out.width = "100%",
+  fig.align = "center"
+)
+
+library(tidyverse)
+library(moments)
+library(knitr)
+library(tseries)
+```
+
+## 3.1 Carga da Cópia de Trabalho (Apenas Treino - D30)
+
+```{r carga}
+# Recorte de treino: 2010-01 a 2025-10 (teste nov/2025-out/2026 fica isolado, D08/D30)
+MES_FIM_TREINO <- "2025-10"
+
+ena   <- read_csv("../data/processed/ena_mensal.csv", show_col_types = FALSE)
+oni   <- read_csv("../data/processed/oni_mensal.csv", show_col_types = FALSE)
+inmet <- read_csv("../data/processed/inmet_estacao_mes.csv", show_col_types = FALSE)
+est   <- read_csv("../data/processed/inmet_estacoes.csv", show_col_types = FALSE)
+
+# Filtra apenas até o fim do treino (D30)
+ena_tr   <- ena   %>% filter(ano_mes <= MES_FIM_TREINO)
+oni_tr   <- oni   %>% filter(ano_mes <= MES_FIM_TREINO)
+inmet_tr <- inmet %>% filter(ano_mes <= MES_FIM_TREINO)
+
+# Agregação provisória da bacia (média simples entre estações disponíveis)
+inmet_bacia <- inmet_tr %>%
+  group_by(ano_mes) %>%
+  summarise(
+    n_estacoes  = n_distinct(codigo),
+    precip_mm_h = mean(precip_mm_h, na.rm = TRUE),
+    temp_c      = mean(temp_c, na.rm = TRUE),
+    umid_pct    = mean(umid_pct, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# Base mensal consolidada de treino (2010-01 a 2025-10)
+treino <- ena_tr %>%
+  left_join(oni_tr, by = "ano_mes") %>%
+  left_join(inmet_bacia, by = "ano_mes") %>%
+  mutate(
+    data = as.Date(paste0(ano_mes, "-01")),
+    mes  = factor(as.integer(substr(ano_mes, 6, 7)), levels = 1:12,
+                  labels = c("Jan","Fev","Mar","Abr","Mai","Jun",
+                             "Jul","Ago","Set","Out","Nov","Dez")),
+    fase_oni = case_when(
+      oni >=  0.5 ~ "El Niño",
+      oni <= -0.5 ~ "La Niña",
+      !is.na(oni) ~ "Neutro",
+      TRUE        ~ NA_character_
+    )
+  )
+
+vars_num <- c("ena_mwmed", "oni", "precip_mm_h", "temp_c", "umid_pct")
+```
+
+Base de treino carregada com **`r nrow(treino)` meses** (`2010-01` a `2025-10`).
+
+## 3.2 Perfil de Cada Variável
+
+```{r perfil}
+perfil <- map_dfr(vars_num, function(v) {
+  x   <- treino[[v]]
+  q   <- quantile(x, probs = c(0.25, 0.75), na.rm = TRUE)
+  iqr <- q[2] - q[1]
+  n_out <- sum(x < (q[1] - 1.5 * iqr) | x > (q[2] + 1.5 * iqr), na.rm = TRUE)
+  tibble(
+    Variavel     = v,
+    Tipo         = "Quant. contínua",
+    Meses        = length(x),
+    Ausentes_pct = round(mean(is.na(x)) * 100, 2),
+    Outliers_IQR = n_out
+  )
+})
+
+kable(perfil, booktabs = TRUE,
+      caption = "Perfil das variáveis na base mensal de treino (2010-01 a 2025-10)")
+```
+
+```{r completude}
+inmet_tr %>%
+  filter(ano_mes >= "2010-01") %>%
+  group_by(codigo) %>%
+  summarise(
+    Meses       = n(),
+    Precip_pct  = round(mean(horas_precip / horas_mes, na.rm = TRUE) * 100, 1),
+    Temp_pct    = round(mean(horas_temp   / horas_mes, na.rm = TRUE) * 100, 1),
+    Umid_pct    = round(mean(horas_umid   / horas_mes, na.rm = TRUE) * 100, 1),
+    .groups = "drop"
+  ) %>%
+  left_join(est %>% select(codigo, estacao, uf, primeiro_mes), by = "codigo") %>%
+  select(Cod = codigo, Estacao = estacao, UF = uf, Inicio = primeiro_mes,
+         Meses, Precip_pct, Temp_pct, Umid_pct) %>%
+  arrange(Inicio, Cod) %>%
+  kable(booktabs = TRUE,
+        caption = "Completude média (% de horas válidas) por estação no treino")
+```
+
+## 3.3 Estatística Descritiva Univariada
+
+```{r descritiva}
+moda_dens <- function(x) {
+  x <- na.omit(x)
+  d <- density(x)
+  d$x[which.max(d$y)]
+}
+
+desc <- map_dfr(vars_num, function(v) {
+  x <- treino[[v]]
+  tibble(
+    Var    = v,
+    Media  = mean(x, na.rm = TRUE),
+    Med    = median(x, na.rm = TRUE),
+    Moda   = moda_dens(x),
+    DP     = sd(x, na.rm = TRUE),
+    Q1     = quantile(x, 0.25, na.rm = TRUE),
+    Q3     = quantile(x, 0.75, na.rm = TRUE),
+    Min    = min(x, na.rm = TRUE),
+    Max    = max(x, na.rm = TRUE),
+    Assim  = skewness(x, na.rm = TRUE),
+    Curt   = kurtosis(x, na.rm = TRUE)
+  )
+}) %>%
+  mutate(across(where(is.numeric), ~ round(.x, 2)))
+
+kable(desc, booktabs = TRUE, caption = "Estatísticas descritivas univariadas (treino)")
+
+treino %>%
+  count(fase_oni, name = "Meses") %>%
+  mutate(Pct = round(Meses / sum(Meses) * 100, 1)) %>%
+  kable(booktabs = TRUE, caption = "Frequência das fases do El Niño / La Niña no treino")
+```
+
+## 3.4 Distribuições, Série Temporal e Decomposição
+
+```{r serie-ena}
+ggplot(treino, aes(data, ena_mwmed)) +
+  geom_line(color = "#1f77b4", linewidth = 0.7) +
+  labs(title = "Série Temporal da ENA Mensal - Bacia do Rio Grande (Treino: 2010-2025)",
+       x = "Ano", y = "ENA bruta (MWmed)") +
+  theme_minimal()
+```
+
+```{r histogramas}
+treino %>%
+  select(all_of(vars_num)) %>%
+  pivot_longer(everything(), names_to = "variavel", values_to = "valor") %>%
+  ggplot(aes(valor)) +
+  geom_histogram(bins = 25, fill = "#2c7fb8", color = "white", alpha = 0.85) +
+  facet_wrap(~ variavel, scales = "free") +
+  labs(title = "Histogramas das variáveis (treino)", x = NULL, y = "Frequência") +
+  theme_minimal()
+```
+
+```{r qqplot-d05, fig.height=3.5}
+par(mfrow = c(1, 2))
+qqnorm(treino$ena_mwmed, main = "QQ-Plot: ENA original"); qqline(treino$ena_mwmed, col = "red")
+qqnorm(log(treino$ena_mwmed), main = "QQ-Plot: log(ENA)"); qqline(log(treino$ena_mwmed), col = "red")
+par(mfrow = c(1, 1))
+```
+
+```{r decomposicao-adf, fig.height=5}
+ts_ena <- ts(treino$ena_mwmed, start = c(2010, 1), frequency = 12)
+plot(decompose(ts_ena, type = "multiplicative"))
+adf.test(ts_ena)
+```
+
+## 3.5 Análise Bivariada e Defasagens (D14, D20 e D27)
+
+```{r boxplots}
+ggplot(treino, aes(mes, ena_mwmed)) +
+  geom_boxplot(fill = "#74a9cf", alpha = 0.8) +
+  labs(title = "Distribuição da ENA por mês do ano (sazonalidade)",
+       x = "Mês", y = "ENA (MWmed)") +
+  theme_minimal()
+
+ggplot(treino %>% filter(!is.na(fase_oni)), aes(fase_oni, ena_mwmed, fill = fase_oni)) +
+  geom_boxplot(alpha = 0.8, show.legend = FALSE) +
+  labs(title = "ENA por fase do ONI (contemporâneo)", x = "Fase", y = "ENA (MWmed)") +
+  theme_minimal()
+```
+
+```{r correlacoes}
+mat <- treino %>% select(all_of(vars_num)) %>% drop_na()
+kable(round(cor(mat, method = "pearson"), 2),  booktabs = TRUE, caption = "Correlação de Pearson (treino)")
+kable(round(cor(mat, method = "spearman"), 2), booktabs = TRUE, caption = "Correlação de Spearman (treino)")
+```
+
+```{r dispersao}
+ggplot(treino, aes(precip_mm_h, ena_mwmed)) +
+  geom_point(alpha = 0.6, color = "#1f77b4") +
+  geom_smooth(method = "lm", se = TRUE, color = "darkred") +
+  labs(title = "Dispersão: Precipitação média horária vs ENA (treino)",
+       x = "Precipitação média na bacia (mm/h)", y = "ENA (MWmed)") +
+  theme_minimal()
+```
+
+```{r ccf-defasagens, fig.height=5.5}
+par(mfrow = c(2, 2))
+ccf(treino$oni,         treino$ena_mwmed, lag.max = 12, na.action = na.pass, main = "ONI vs ENA")
+ccf(treino$precip_mm_h, treino$ena_mwmed, lag.max = 6,  na.action = na.pass, main = "Precipitação vs ENA")
+ccf(treino$temp_c,      treino$ena_mwmed, lag.max = 6,  na.action = na.pass, main = "Temperatura vs ENA")
+ccf(treino$umid_pct,    treino$ena_mwmed, lag.max = 6,  na.action = na.pass, main = "Umidade vs ENA")
+par(mfrow = c(1, 1))
+```
+
+```{r teste-d27}
+est_2010 <- c("A708","A516","A515","A530","A531","A514","A525","A520","A529","A738","A747","A753","A748")
+
+comp_d27 <- inmet_tr %>%
+  filter(ano_mes >= "2019-01") %>%
+  group_by(ano_mes) %>%
+  summarise(
+    precip_13 = mean(precip_mm_h[codigo %in% est_2010], na.rm = TRUE),
+    precip_19 = mean(precip_mm_h, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+cat("Correlação precip_mm_h (13 fixas vs 19 estações, 2019-2025):",
+    round(cor(comp_d27$precip_13, comp_d27$precip_19, use = "complete.obs"), 4), "\n")
+```
