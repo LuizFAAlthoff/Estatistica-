@@ -51,7 +51,7 @@ O que **não** se transfere ao pé da letra:
 - [ ] **2.3 Verificar adequação dos dados** – ENA e ONI verificados; INMET: estações automáticas desde 2010 (D25, D26) (ver [docs/verificacao-dados.md](docs/verificacao-dados.md))
 - [x] **2.4 Aquisição e armazenamento** – dados brutos em `data/raw/` (ons, noaa, inmet), fora do Git
 - [ ] **2.5 Ética e sensibilidade** – anonimizar dados pessoais, licença de uso, TCLE se houver questionário
-- [ ] **2.6 Dicionário de dados** – nome, descrição, tipo, unidade, valores possíveis
+- [x] **2.6 Dicionário de dados** – nome, descrição, tipo, unidade, valores possíveis
 - [x] **2.7 Automatizar a obtenção** – `R/01_baixar_dados.R` baixa ENA, ONI e INMET de 2010 até o ano atual
 
 **Entregável:** base bruta + dicionário de dados + script de obtenção.
