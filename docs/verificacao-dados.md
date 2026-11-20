@@ -1,79 +1,118 @@
-# Dicionário de Dados
+# Verificação dos dados (EAP 2.3)
 
-> Descrição das fontes, variáveis brutas (`data/raw/`) e estrutura prevista para a base mensal consolidada (`data/processed/`) do projeto **Previsão da ENA da Bacia do Rio Grande** (INE5649 – UFSC).
->
-> **Período de análise (D26):** janeiro de 2010 a outubro de 2026 (último mês completo disponível).
-> **Escala da modelagem (D04):** mensal (`frequência = 12`).
-> **Conjunto de teste (D08):** últimos 12 meses completos (nov/2025 a out/2026).
+> Primeiro contato com as três fontes (19/11/2026). Objetivo: conferir a estrutura dos arquivos, os tipos das variáveis, a cobertura das datas e os problemas antes do download completo (2.4).
+> As amostras analisadas ficam em `data/raw/amostra/`. Os zips do INMET ficam em `data/raw/inmet/`, que está fora do Git por causa do tamanho (1,9 GB).
 
 ---
 
-## 1. Dados Brutos (`data/raw/`)
+## 1. ENA — ONS, "ENA diária por bacia" (D22)
 
-### 1.1 ONS — ENA Diária por Bacia (D22)
+**Amostra:** arquivos de 2000, 2025 e 2026, baixados de `https://ons-aws-prod-opendata.s3.amazonaws.com/dataset/ena_bacia_di/ENA_DIARIO_BACIAS_<ano>.csv`. Há um arquivo por ano.
 
-- **Fonte:** Operador Nacional do Sistema Elétrico (Portal de Dados Abertos).
-- **Arquivos:** `ENA_DIARIO_BACIAS_<ano>.csv` (um arquivo por ano).
-- **Formato:** CSV, codificação `UTF-8`, separador `;`, decimal `.`, formato longo (uma linha por bacia por dia).
+**Formato:** CSV separado por `;`, com ponto como separador decimal, codificação UTF-8 e uma linha de cabeçalho. Os dados estão em **formato longo**: uma linha por bacia por dia, com todas as bacias no mesmo arquivo.
 
-| Nome | Descrição | Tipo | Unidade | Valores possíveis | Uso no projeto |
-|---|---|---|---|---|---|
-| `nom_bacia` | Nome da bacia hidrográfica | Qualitativa nominal (texto) | — | Nomes das bacias do SIN (ex.: `GRANDE`, `PARANA`, `PARANAIBA`, etc.) | Filtro (`GRANDE`) |
-| `ena_data` | Data da observação diária | Data | `AAAA-MM-DD` | `2000-01-01` a `2026-11-18` (recorte do projeto: `2010-01-01` a `2026-10-31`) | Chave temporal |
-| `ena_bruta_bacia_mwmed` | Energia Natural Afluente bruta da bacia | Quantitativa contínua | MWmed | Reais $> 0$ (na amostra da GRANDE: ~1.100 a >11.400) | **Variável resposta (D05)** |
-| `ena_bruta_bacia_percentualmlt` | ENA bruta em percentual da Média de Longo Termo (MLT) | Quantitativa contínua | % | Reais $> 0$ | Descartada (D05) |
-| `ena_armazenavel_bacia_mwmed` | Parcela da ENA passível de armazenamento | Quantitativa contínua | MWmed | Reais $\ge 0$ | Descartada |
-| `ena_armazenavel_bacia_percentualmlt` | Parcela armazenável em percentual da MLT | Quantitativa contínua | % | Reais $\ge 0$ | Descartada |
+| Coluna | Tipo | Descrição | Uso |
+|---|---|---|---|
+| `nom_bacia` | Qualitativa nominal (texto) | Nome da bacia | Filtrar `GRANDE` |
+| `ena_data` | Data (`AAAA-MM-DD`) | Dia da observação | Índice de tempo |
+| `ena_bruta_bacia_mwmed` | Quantitativa contínua (MWmed) | ENA bruta | **Variável resposta (D05)** |
+| `ena_bruta_bacia_percentualmlt` | Quantitativa contínua (%) | ENA bruta em % da média de longo termo (MLT) | Não usada (D05) |
+| `ena_armazenavel_bacia_mwmed` | Quantitativa contínua (MWmed) | Parcela da ENA que pode ser armazenada | Não usada |
+| `ena_armazenavel_bacia_percentualmlt` | Quantitativa contínua (%) | A mesma parcela, em % da MLT | Não usada |
 
----
+**Bacia GRANDE na amostra:**
 
-### 1.2 CPC/NOAA — Índice ONI (*Oceanic Niño Index*) (D13, D24)
+- Não há dias faltando, datas repetidas, valores ausentes, zeros ou negativos nos três anos. As datas estão em ordem.
+- O arquivo de 2026 vai até **18/11/2026**. O último mês completo é **out/2026**, então o teste da D08/D10 vai de **nov/2025 a out/2026**.
+- A sazonalidade é forte. Em 2000, a média de janeiro foi de cerca de 11.400 MWmed e a de outubro, de cerca de 1.800. Em 2025, a média de setembro ficou em cerca de 1.100.
 
-- **Fonte:** Climate Prediction Center / NOAA (`oni.ascii.txt`).
-- **Formato:** texto delimitado por espaços, com cabeçalho.
+**Ponto de atenção:** a lista de bacias mudou com o tempo. Eram 24 em 2000, 23 em 2025 e 35 em 2026. Em 2026 aparecem bacias novas, como MADEIRA, XINGU e ANTAS, e em 2025 sumiram OUTRAS-SUDESTE e OUTRAS-SUL. A GRANDE mantém o nome em todos os anos. No download completo, é preciso conferir se a série não dá um salto na virada de 2025 para 2026, o que indicaria uma mudança na definição da bacia.
 
-| Nome | Descrição | Tipo | Unidade | Valores possíveis | Uso no projeto |
-|---|---|---|---|---|---|
-| `SEAS` | Trimestre móvel de 3 meses | Qualitativa ordinal (texto) | — | `DJF`, `JFM`, `FMA`, `MAM`, `AMJ`, `MJJ`, `JJA`, `JAS`, `ASO`, `SON`, `OND`, `NDJ` | Conversão para o mês central (D24) |
-| `YR` | Ano de referência do trimestre | Quantitativa discreta | Ano (`AAAA`) | Inteiros de `1950` a `2026` | Chave temporal |
-| `TOTAL` | Temperatura média da superfície do mar na região Niño 3.4 | Quantitativa contínua | °C | Reais positivos (tipicamente entre ~24 e ~30 °C) | Descartada |
-| `ANOM` | Anomalia de temperatura (índice **ONI**) | Quantitativa contínua | °C | Reais positivos ou negativos (tipicamente entre −2,5 e +2,6; $\ge +0{,}5$ El Niño, $\le -0{,}5$ La Niña) | **Variável explicativa candidata (D15)** |
+## 2. ONI — CPC/NOAA (D13, D24)
 
-**Regras de conversão:** cada trimestre é associado ao mês central (`DJF` → jan, …, `NDJ` → dez). Para `NDJ`, o ano em `YR` é o do início do trimestre (`NDJ/2025` → **dez/2025**). Por ser média móvel centrada, o valor do mês $t$ só é conhecido ao fim do mês $t+1$ (atraso de 1 mês considerado na D14/D24).
+**Arquivo:** `https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt`. É texto separado por espaços, com cabeçalho.
 
----
+| Coluna | Tipo | Descrição | Uso |
+|---|---|---|---|
+| `SEAS` | Qualitativa ordinal (texto) | Trimestre móvel: DJF, JFM, …, NDJ | Converter para o mês central (D24) |
+| `YR` | Quantitativa discreta (ano) | Ano | Índice de tempo |
+| `TOTAL` | Quantitativa contínua (°C) | Temperatura média do mar na região Niño 3.4 | Não usada |
+| `ANOM` | Quantitativa contínua (°C) | Anomalia de temperatura, que é o **ONI** | **Variável explicativa** |
 
-### 1.3 INMET — Estações Meteorológicas Automáticas (D19, D25)
+- Vai de DJF/1950 a **ASO/2026**, que pelo mês central corresponde a **set/2026**. São 921 linhas, sem valores faltando.
+- **Cuidado na conversão:** o trimestre NDJ aparece com o ano em que começa (NDJ/2025 = nov/2025 a jan/2026). Pelo mês central, ele vira **dez/2025**. Os outros trimestres não têm esse problema: o mês central cai no próprio ano.
+- O ONI está em **+2,46** em ASO/2026, um El Niño forte bem no período de teste. Vale comentar isso na discussão.
 
-- **Fonte:** Instituto Nacional de Meteorologia (*Dados Históricos*, `2010.zip` a `2026.zip`).
-- **Formato:** CSV por estação/ano, codificação `latin-1`, separador `;`, decimal `,`, 8 linhas iniciais de metadados + registros horários.
-- **Cobertura espacial (D25, D27):** 19 estações na bacia do Rio Grande (12 desde jan/2010, Barretos desde jun/2010 e 6 iniciadas entre 2015 e 2019).
+## 3. INMET
 
-| Nome | Descrição | Tipo | Unidade | Valores possíveis | Status / Candidata (D20) |
-|---|---|---|---|---|---|
-| `Data` | Data do registro horário | Data | `AAAA/MM/DD` | `2010/01/01` a `2026/10/31` | Chave temporal |
-| `Hora UTC` | Hora da leitura em tempo universal | Hora | `HHMM UTC` | `0000 UTC` a `2300 UTC` (de hora em hora) | Chave temporal |
-| Precipitação total | Volume de chuva acumulado na hora | Quantitativa contínua | mm | Reais $\ge 0$; ausentes como `-9999` ou vazio | **Candidata principal** |
-| Temperatura do ar (bulbo seco, máx., mín.) | Temperatura do ar na hora, máxima e mínima horária | Quantitativa contínua | °C | Reais (tipicamente −5 a 45 °C na bacia); ausentes como `-9999` ou vazio | **Candidata** |
-| Umidade relativa (na hora, máx., mín.) | Umidade relativa do ar | Quantitativa contínua | % | Reais de `0` a `100`; ausentes como `-9999` ou vazio | **Candidata** |
-| Radiação global | Radiação solar incidente na hora | Quantitativa contínua | kJ/m² | Reais $\ge 0$ (zero à noite); ausentes como `-9999` ou vazio | A avaliar na etapa 3 |
-| Pressão atmosférica (na hora, máx., mín.) | Pressão atmosférica no nível da estação | Quantitativa contínua | mB | Reais positivos (tipicamente 850 a 1050 mB); ausentes como `-9999` ou vazio | A avaliar na etapa 3 |
-| Temperatura do ponto de orvalho (na hora, máx., mín.) | Temperatura de condensação do vapor d'água | Quantitativa contínua | °C | Reais $\le$ temperatura do ar; ausentes como `-9999` ou vazio | A avaliar na etapa 3 |
-| Vento — velocidade e rajada máxima | Velocidade média e rajada máxima do vento | Quantitativa contínua | m/s | Reais $\ge 0$; ausentes como `-9999` ou vazio | A avaliar na etapa 3 |
-| Vento — direção | Direção de origem do vento | Quantitativa contínua | ° (graus) | `0` a `360`; ausentes como `-9999` ou vazio | A avaliar na etapa 3 |
+### 3.1 Estações convencionais (BDMEP, D23)
 
----
+- Não há download direto. O BDMEP (`bdmep.inmet.gov.br`) é um **formulário de pedido**: o usuário escolhe estações, variáveis, período e escala (diária ou mensal), e o link chega por e-mail (remetente `bdmep@inmet.gov.br`). Os pedidos entram numa fila.
+- A API do INMET (`apitempo.inmet.gov.br/estacoes/M`) lista **85 estações convencionais em operação** no Brasil. Dentro da bacia do Grande, estão só **Franca (83630, SP)**, **Lavras (83687, MG)** e **Passa Quatro (83737, MG)**, todas em operação desde 1910–1912. Araxá fica na bacia do Paranaíba e Belo Horizonte, na do São Francisco.
+- A lista só mostra as estações que operam hoje. Estações desativadas podem ter histórico no BDMEP.
 
-## 2. Base Analítica Consolidada (`data/processed/`) — Estrutura Prevista
+### 3.2 Estações automáticas ("Dados Históricos", zips anuais)
 
-Tabela mensal final usada nos modelos (os valores de $k$ e a inclusão final de cada variável serão fechados na Etapa 3 — decisões **D05**, **D14**, **D20** e **D27**).
+**Arquivos:** `data/raw/inmet/2000.zip` a `2026.zip`, baixados manualmente do portal do INMET. Cada zip tem **um CSV por estação por ano**.
 
-| Nome (sugestão) | Descrição | Tipo | Unidade | Valores possíveis | Regra de construção |
-|---|---|---|---|---|---|
-| `ano_mes` | Mês de referência da observação | Data | `AAAA-MM` | `2010-01` a `2026-10` (~202 meses) | Índice mensal contínuo (D26) |
-| `ena_mwmed` | ENA bruta média mensal da bacia do Rio Grande | Quantitativa contínua | MWmed | Reais $> 0$ (sem `NA`) | Média mensal dos valores diários do ONS; transformação a avaliar (D05) |
-| `oni_lag_k` | Índice ONI defasado em $k$ meses | Quantitativa contínua | °C | Reais (tipicamente −2,5 a +2,6) | `ANOM` convertido para mês central e defasado em $k$ meses (D14) |
-| `precip_mm_lag_k` | Precipitação mensal agregada da bacia defasada em $k$ meses | Quantitativa contínua | mm | Reais $\ge 0$ (ou reais positivos/negativos, se agregada como anomalia) | Soma mensal por estação → agregação entre estações (D27) → lag $k$ (D20) |
-| `temp_c_lag_k` | Temperatura média mensal da bacia defasada em $k$ meses | Quantitativa contínua | °C | Reais (tipicamente 10 a 35 °C, ou anomalia em °C) | Média mensal por estação → agregação entre estações → lag $k$ (D20) |
-| `umid_pct_lag_k` | Umidade relativa média mensal da bacia defasada em $k$ meses | Quantitativa contínua | % | Reais de `0` a `100` (ou anomalia em p.p.) | Média mensal por estação → agregação entre estações → lag $k$ (D20) |
-| `mes_02` … `mes_12` | Variáveis indicadoras (*dummies*) do mês do ano | Qualitativa binária | — | `0` ou `1` (referência: janeiro) | Criadas a partir de `ano_mes`; inclusão sujeita à análise de multicolinearidade (D20) |
+**Formato de cada CSV:**
+
+- Codificação latin-1, separador `;` e **vírgula** como separador decimal.
+- As **8 primeiras linhas são metadados**: região, UF, nome da estação, código WMO (ex.: A502), latitude, longitude, altitude e data de fundação.
+- Depois vem uma linha de cabeçalho e **um registro por hora** (`Data` em `AAAA/MM/DD`, `Hora UTC`).
+- Valor faltando aparece como `-9999` ou vazio.
+
+| Variáveis horárias (todas quantitativas contínuas) | Unidade |
+|---|---|
+| Precipitação total | mm |
+| Pressão atmosférica (na hora, máxima e mínima) | mB |
+| Radiação global | kJ/m² |
+| Temperatura do ar (bulbo seco, máxima e mínima) | °C |
+| Temperatura do ponto de orvalho (na hora, máxima e mínima) | °C |
+| Umidade relativa (na hora, máxima e mínima) | % |
+| Vento (direção, rajada máxima e velocidade) | °, m/s |
+
+**Cobertura:** o INMET tem 705 estações automáticas distintas entre 2000 e 2026. Na região da bacia, porém, quase todas começaram tarde:
+
+| Ano | Estações automáticas na região ampla da bacia (MG/SP/RJ/GO/MS) |
+|---|---|
+| 2000 | 1 |
+| 2005 | 9 |
+| 2008 | 49 |
+| 2015 | 52 |
+| 2026 | 69 |
+
+**Estações automáticas que provavelmente ficam dentro da bacia do Grande:** a classificação é aproximada, pela localização. A confirmação exige o contorno oficial da bacia.
+
+| Código | Estação | UF | Desde | % de horas com chuva válida |
+|---|---|---|---|---|
+| A708 | Franca | SP | 2002 | 83 |
+| A516 | Passos | MG | 2006 | 92 |
+| A515 | Varginha | MG | 2006 | 89 |
+| A530 | Caldas | MG | 2006 | 93 |
+| A531 | Maria da Fé | MG | 2006 | 97 |
+| A514 | São João del Rei | MG | 2006 | 94 |
+| A525 | Sacramento | MG | 2006 | 91 |
+| A520 | Conceição das Alagoas | MG | 2006 | 91 |
+| A529 | Passa Quatro | MG | 2007 | 89 |
+| A738 | Casa Branca | SP | 2007 | 80 |
+| A747 | Pradópolis | SP | 2008 | 85 |
+| A753 | Ituverava | SP | 2008 | 84 |
+| A748 | Barretos | SP | 2010 | 80 |
+| A561 | São Sebastião do Paraíso | MG | 2015 | 69 |
+| A764 | Bebedouro | SP | 2016 | 76 |
+| A568 | Uberaba | MG | 2017 | 96 |
+| A567 | Machado | MG | 2017 | 93 |
+| A570 | Oliveira | MG | 2017 | 96 |
+| A770 | São Simão | SP | 2019 | 92 |
+
+São cerca de 19 estações, mas só Franca tem dados antes de 2006. Elas também têm entre 3% e 31% das horas sem registro de chuva.
+
+### 3.3 Escolha entre convencionais e automáticas
+
+Os zips baixados são das **estações automáticas**, e a D23 escolheu as **convencionais (BDMEP)**. As duas opções têm um custo:
+
+- **Convencionais:** só 3 estações na bacia, mas com o período todo desde 2000. Dependem de um pedido por e-mail.
+- **Automáticas:** cerca de 19 estações na bacia, mas quase todas só a partir de 2006–2008. Isso cortaria o início do período (D10) ou deixaria a regressão sem dados meteorológicos nos primeiros anos.
+
+**Decisão (D25, D26):** usar as **estações automáticas** e começar todas as séries em **jan/2010**. Em jan/2010, 12 das estações da tabela já tinham dados, e Barretos começa em 19/06/2010. As outras 6 (de 2015 em diante) ficam para a D20b.
