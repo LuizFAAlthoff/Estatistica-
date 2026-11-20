@@ -58,7 +58,7 @@ O que **não** se transfere ao pé da letra:
 
 ## 3. Análise Exploratória *(Explorar os Dados)*
 
-- [ ] **3.1 Cópia de trabalho** – explorar sobre uma cópia; documentar em notebook
+- [x] **3.1 Cópia de trabalho** – `R/02_base_mensal.R` gera as tabelas mensais em `data/processed/` (ENA e INMET: média mensal dos valores diários/horários; ONI pelo mês central; sem limpeza, com o nº de horas válidas de cada estação e mês)
 - [ ] **3.2 Perfil de cada variável** – tipo (qualitativa nominal/ordinal, quantitativa discreta/contínua), % ausentes, valores discrepantes, relevância
 - [ ] **3.3 Estatística descritiva univariada** – média, mediana, moda, desvio-padrão, quartis, assimetria, curtose; tabelas de frequência
 - [ ] **3.4 Distribuições** – histogramas, boxplots, gráficos de barras, QQ-plots (normal? log-normal? assimétrica?)

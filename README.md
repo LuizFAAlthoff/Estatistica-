@@ -17,7 +17,7 @@ O grupo escolheu a **ENA – Energia Natural Afluente** da **bacia do Rio Grande
 
 ## 2. O que já foi decidido
 
-Cada decisão está registrada com alternativas e justificativa em **[docs/decisoes.md](docs/decisoes.md)** (D01–D21). Esse arquivo vai servir de base para a seção *Materiais e métodos*. Resumo:
+Cada decisão está registrada com alternativas e justificativa em **[docs/decisoes.md](docs/decisoes.md)** (D01–D29). Esse arquivo vai servir de base para a seção *Materiais e métodos*. Resumo:
 
 | Item | Decisão |
 |------|---------|
@@ -81,4 +81,5 @@ O plano completo, etapa por etapa, está na **[EAP.md](EAP.md)**.
 2. Antes de começar, rode **`git pull`** para pegar a versão mais recente.
 3. **Baixe os dados** (só na primeira vez; leva alguns minutos e ocupa ~1,5 GB). Na pasta raiz do repositório, rode `Rscript R/01_baixar_dados.R`, ou abra o arquivo no RStudio e clique em *Source*. Os dados ficam em `data/raw/`, que não vai para o GitHub.
 4. Mexa nos arquivos do seu bloco, faça commits pequenos com mensagens claras e envie com `git push`.
-5. Toda decisão nova (variável, defasagem, transformação, modelo descartado) vai para o **[docs/decisoes.md](docs/decisoes.md)** com uma justificativa, para não se perder na hora de escrever o resumo.
+5. **Toda transformação de dados é feita por um script em `R/` e commitada** junto com os arquivos que ele gera (D29). As regras completas, que também valem para as IAs, estão no **[AGENTS.md](AGENTS.md)**. Para recriar a base mensal, rode `Rscript R/02_base_mensal.R`.
+6. Toda decisão nova (variável, defasagem, transformação, modelo descartado) vai para o **[docs/decisoes.md](docs/decisoes.md)** com uma justificativa, para não se perder na hora de escrever o resumo.

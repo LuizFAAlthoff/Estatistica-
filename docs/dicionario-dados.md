@@ -77,3 +77,27 @@ Tabela mensal final usada nos modelos (os valores de $k$ e a inclusão final de 
 | `temp_c_lag_k` | Temperatura média mensal da bacia defasada em $k$ meses | Quantitativa contínua | °C | Reais (tipicamente 10 a 35 °C, ou anomalia em °C) | Média mensal por estação → agregação entre estações → lag $k$ (D20) |
 | `umid_pct_lag_k` | Umidade relativa média mensal da bacia defasada em $k$ meses | Quantitativa contínua | % | Reais de `0` a `100` (ou anomalia em p.p.) | Média mensal por estação → agregação entre estações → lag $k$ (D20) |
 | `mes_02` … `mes_12` | Variáveis indicadoras (*dummies*) do mês do ano | Qualitativa binária | — | `0` ou `1` (referência: janeiro) | Criadas a partir de `ano_mes`; inclusão sujeita à análise de multicolinearidade (D20) |
+
+---
+
+## 3. Cópia de trabalho mensal (`data/processed/`, EAP 3.1, D28)
+
+Gerada por `Rscript R/02_base_mensal.R`. Os dados ainda **não foram limpos**: nenhum mês foi descartado nem preenchido.
+
+| Arquivo | Coluna | Descrição | Tipo | Unidade |
+|---|---|---|---|---|
+| `ena_mensal.csv` | `ano_mes` | Mês (`AAAA-MM`), de 2010-01 a 2026-10 | Data | — |
+| | `ena_mwmed` | Média dos valores diários de ENA bruta da bacia GRANDE | Quantitativa contínua | MWmed |
+| | `n_dias` | Dias com dado no mês | Quantitativa discreta | dias |
+| `oni_mensal.csv` | `ano_mes` | Mês central do trimestre (`AAAA-MM`), de 2000-01 ao último publicado | Data | — |
+| | `oni` | Índice ONI (`ANOM`) | Quantitativa contínua | °C |
+| `inmet_estacao_mes.csv` | `codigo` | Código WMO da estação (ex.: `A516`) | Qualitativa nominal | — |
+| | `ano_mes` | Mês (`AAAA-MM`, pela hora UTC) | Data | — |
+| | `precip_mm_h` | Média das precipitações horárias válidas do mês (× horas do mês = total mensal) | Quantitativa contínua | mm/h |
+| | `temp_c` | Média das temperaturas horárias válidas (bulbo seco) | Quantitativa contínua | °C |
+| | `umid_pct` | Média das umidades relativas horárias válidas | Quantitativa contínua | % |
+| | `horas_precip`, `horas_temp`, `horas_umid` | Horas com valor válido de cada variável no mês | Quantitativa discreta | horas |
+| | `horas_mes` | Horas que o mês tem (672 a 744) | Quantitativa discreta | horas |
+| `inmet_estacoes.csv` | `codigo`, `estacao`, `uf` | Código, nome e UF da estação | Qualitativa nominal | — |
+| | `latitude`, `longitude`, `altitude_m` | Localização da estação | Quantitativa contínua | graus, m |
+| | `primeiro_mes` | Primeiro mês com arquivo no período | Data | — |
