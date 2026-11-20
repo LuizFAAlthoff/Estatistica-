@@ -1,6 +1,21 @@
 # Instruções para quem trabalha neste repositório (pessoas e IAs)
 
-Trabalho de INE5649 (UFSC): previsão da ENA mensal da bacia do Rio Grande, em R. O plano está em [EAP.md](EAP.md), e as decisões estão em [docs/decisoes.md](docs/decisoes.md).
+Trabalho de INE5649 (UFSC): previsão da ENA mensal da bacia do Rio Grande, em R.
+
+**Leia antes de começar:**
+- o enunciado do professor, em [docs/enunciado.md](docs/enunciado.md) (o original está em `docs/enunciado-INE5649.pdf`);
+- o resumo do projeto, no [README.md](README.md);
+- o plano, na [EAP.md](EAP.md);
+- as decisões já tomadas, em [docs/decisoes.md](docs/decisoes.md).
+
+## Conjunto de teste cego (D30), obrigatório
+
+Os **12 meses de teste (nov/2025 a out/2026)** não podem ser olhados nem usados para decidir nada até a avaliação final dos modelos (etapas 5–6).
+
+- Eles passam pelas **mesmas transformações** que o resto, porque os scripts de preparação processam a série inteira.
+- Toda análise exploratória, gráfico, estatística, escolha de transformação, defasagem, variável, regra de limpeza ou modelo usa **só o treino (jan/2010 a out/2025)**. Os scripts filtram `ano_mes <= "2025-10"` antes disso.
+- **IAs:** não imprimam, resumam nem comentem valores do período de teste. Se uma tarefa exigir olhar o teste antes da hora, parem e perguntem ao grupo.
+- Os valores do teste só aparecem na comparação das previsões (EAM e RMSE) e na discussão dos resultados.
 
 ## Protocolo de dados (D29), obrigatório
 

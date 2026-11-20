@@ -11,19 +11,19 @@ Trabalho da disciplina **INE5649 – Técnicas Estatísticas de Predição** (UF
 
 ## 1. O que é o trabalho
 
-O professor pede um **resumo expandido** (até 12 páginas, mais um anexo com o código R) analisando **uma série temporal real** com **todos os modelos vistos na disciplina** que se apliquem aos dados. Os modelos que não se aplicarem precisam de uma justificativa técnica.
+O enunciado completo está em **[docs/enunciado.md](docs/enunciado.md)**. O professor pede um **resumo expandido** (até 12 páginas, mais um anexo com o código R) analisando **uma série temporal real** com **todos os modelos vistos na disciplina** que se apliquem aos dados. Os modelos que não se aplicarem precisam de uma justificativa técnica.
 
 O grupo escolheu a **ENA – Energia Natural Afluente** da **bacia do Rio Grande**. A ENA mede a água que chega aos reservatórios das hidrelétricas, convertida em energia. Os dados são públicos e vêm do ONS (Operador Nacional do Sistema Elétrico). Por ser uma variável hidrológica, ela tem um ciclo sazonal forte (período chuvoso e período seco) e pode sofrer influência do El Niño/La Niña.
 
 ## 2. O que já foi decidido
 
-Cada decisão está registrada com alternativas e justificativa em **[docs/decisoes.md](docs/decisoes.md)** (D01–D29). Esse arquivo vai servir de base para a seção *Materiais e métodos*. Resumo:
+Cada decisão está registrada com alternativas e justificativa em **[docs/decisoes.md](docs/decisoes.md)** (D01–D31). Esse arquivo vai servir de base para a seção *Materiais e métodos*. Resumo:
 
 | Item | Decisão |
 |------|---------|
 | Variável estudada | **ENA bruta** da bacia do Rio Grande, em MWmed. Os dados diários do ONS são convertidos para **média mensal**. |
 | Período | De **jan/2010** até o **último mês completo** disponível (D26; antes de 2010 quase não há estações automáticas do INMET na bacia) |
-| Teste | Os **últimos 12 meses** ficam separados para comparar as previsões |
+| Teste | Os **últimos 12 meses** (nov/2025 a out/2026) ficam separados e **cegos**: ninguém olha nem decide nada com base neles até a avaliação dos modelos (D30) |
 | Métricas | **EAM** (erro absoluto médio) e **RMSE** (raiz do erro quadrático médio) |
 | Modelos | Regressão; SES, Holt, Holt-Winters, ETS; AR, MA, ARIMA, SARIMA; mais o **ingênuo sazonal** como referência mínima |
 | Regressão | Usada para **previsão**, com variáveis **meteorológicas do INMET** e o índice **ONI** (El Niño) **com defasagem** (valores de meses anteriores) |

@@ -18,7 +18,10 @@
 # =============================================================================
 
 MES_FINAL <- "2026-10"   # último mês completo (D26)
-ANOS      <- 2010:2026   # período D26
+ANOS      <- 2010:2026   # período D26 (ENA)
+ANOS_INMET <- 2009:2026  # 2009 como histórico para as defasagens (D31)
+# Os meses de teste (nov/2025 a out/2026, D08) recebem as mesmas transformações,
+# mas não são olhados até a avaliação dos modelos (D30).
 
 if (!file.exists("EAP.md")) {
   stop("Rode este script a partir da pasta raiz do repositório (onde está o EAP.md).")
@@ -76,7 +79,7 @@ CONFERE <- c(precip = "^PRECIPITA", temp = "BULBO SECO", umid = "^UMIDADE RELATI
 
 message("== INMET ==")
 meta <- list(); lin <- list()
-for (ano in ANOS) {
+for (ano in ANOS_INMET) {
   zip <- sprintf("data/raw/inmet/%d.zip", ano)
   arqs <- unzip(zip, list = TRUE)$Name
   arqs <- arqs[grepl(paste0("_(", paste(ESTACOES, collapse = "|"), ")_"), arqs)]

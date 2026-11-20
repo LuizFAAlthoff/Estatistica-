@@ -82,7 +82,7 @@ Tabela mensal final usada nos modelos (os valores de $k$ e a inclusão final de 
 
 ## 3. Cópia de trabalho mensal (`data/processed/`, EAP 3.1, D28)
 
-Gerada por `Rscript R/02_base_mensal.R`. Os dados ainda **não foram limpos**: nenhum mês foi descartado nem preenchido.
+Gerada por `Rscript R/02_base_mensal.R`. Os dados ainda **não foram limpos**: nenhum mês foi descartado nem preenchido. Os 12 meses de teste (nov/2025 a out/2026) estão nas tabelas, mas não devem ser olhados até a avaliação dos modelos (D30).
 
 | Arquivo | Coluna | Descrição | Tipo | Unidade |
 |---|---|---|---|---|
@@ -92,7 +92,7 @@ Gerada por `Rscript R/02_base_mensal.R`. Os dados ainda **não foram limpos**: n
 | `oni_mensal.csv` | `ano_mes` | Mês central do trimestre (`AAAA-MM`), de 2000-01 ao último publicado | Data | — |
 | | `oni` | Índice ONI (`ANOM`) | Quantitativa contínua | °C |
 | `inmet_estacao_mes.csv` | `codigo` | Código WMO da estação (ex.: `A516`) | Qualitativa nominal | — |
-| | `ano_mes` | Mês (`AAAA-MM`, pela hora UTC) | Data | — |
+| | `ano_mes` | Mês (`AAAA-MM`, pela hora UTC), desde 2009-01 (2009 serve só de histórico para as defasagens, D31) | Data | — |
 | | `precip_mm_h` | Média das precipitações horárias válidas do mês (× horas do mês = total mensal) | Quantitativa contínua | mm/h |
 | | `temp_c` | Média das temperaturas horárias válidas (bulbo seco) | Quantitativa contínua | °C |
 | | `umid_pct` | Média das umidades relativas horárias válidas | Quantitativa contínua | % |

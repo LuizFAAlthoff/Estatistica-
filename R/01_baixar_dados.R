@@ -8,7 +8,7 @@
 # O que baixa (período definido em D26: jan/2010 até o ano atual):
 #   data/raw/ons/   ENA diária por bacia (ONS), um CSV por ano          (D22)
 #   data/raw/noaa/  tabela do ONI (CPC/NOAA)                             (D24)
-#   data/raw/inmet/ estações automáticas do INMET, um ZIP por ano (~1,5 GB) (D25)
+#   data/raw/inmet/ estações automáticas do INMET, um ZIP por ano, desde 2009 (~1,6 GB) (D25, D31)
 #
 # Arquivos que já existem são pulados, exceto os do ano atual e o ONI, que
 # são atualizados a cada execução. Para forçar tudo de novo: FORCAR <- TRUE.
@@ -17,6 +17,7 @@
 # =============================================================================
 
 ANO_INICIAL <- 2010
+ANO_INICIAL_INMET <- 2009   # 2009 só serve de histórico para as defasagens (D31)
 ANO_FINAL   <- as.integer(format(Sys.Date(), "%Y"))
 FORCAR      <- FALSE
 
@@ -76,7 +77,7 @@ baixar("https://www.cpc.ncep.noaa.gov/data/indices/oni.ascii.txt", "data/raw/noa
 message("\n== INMET (estações automáticas) ==")
 PAGINA_INMET <- "https://portal.inmet.gov.br/dadoshistoricos"
 baixar(PAGINA_INMET, tempfile(fileext = ".html"))
-for (ano in anos) {
+for (ano in ANO_INICIAL_INMET:ANO_FINAL) {
   destino <- file.path("data/raw/inmet", sprintf("%d.zip", ano))
   if (!precisa_baixar(destino, ano)) { message(ano, ": já existe"); next }
   message(ano, ": baixando (pode levar alguns minutos)")
