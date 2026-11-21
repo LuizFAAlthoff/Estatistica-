@@ -59,29 +59,29 @@ O que **não** se transfere ao pé da letra:
 ## 3. Análise Exploratória *(Explorar os Dados)*
 
 - [x] **3.1 Cópia de trabalho** – `R/02_base_mensal.R` gera as tabelas mensais em `data/processed/` (ENA e INMET: média mensal dos valores diários/horários; ONI pelo mês central; sem limpeza, com o nº de horas válidas de cada estação e mês)
-- [ ] **3.2 Perfil de cada variável** – tipo (qualitativa nominal/ordinal, quantitativa discreta/contínua), % ausentes, valores discrepantes, relevância
-- [ ] **3.3 Estatística descritiva univariada** – média, mediana, moda, desvio-padrão, quartis, assimetria, curtose; tabelas de frequência
-- [ ] **3.4 Distribuições** – histogramas, boxplots, gráficos de barras, QQ-plots (normal? log-normal? assimétrica?)
-- [ ] **3.5 Análise bivariada** – correlações (Pearson/Spearman), tabelas de contingência, boxplots por grupo, dispersão
-- [ ] **3.6 Insights e transformações promissoras** – o que sugere a exploração? Falta algum dado extra?
+- [x] **3.2 Perfil de cada variável** – tipo (qualitativa nominal/ordinal, quantitativa discreta/contínua), % ausentes, valores discrepantes, relevância
+- [x] **3.3 Estatística descritiva univariada** – média, mediana, moda, desvio-padrão, quartis, assimetria, curtose; tabelas de frequência
+- [x] **3.4 Distribuições** – histogramas, boxplots, gráficos de barras, QQ-plots (normal? log-normal? assimétrica?)
+- [x] **3.5 Análise bivariada** – correlações (Pearson/Spearman), tabelas de contingência, boxplots por grupo, dispersão
+- [x] **3.6 Insights e transformações promissoras** – o que sugere a exploração? Falta algum dado extra?
 
 **Entregável:** notebook de EDA + resumo de achados (bullet points).
 
 ## 4. Preparar os Dados
 
-- [ ] **4.1 Limpeza**
+- [x] **4.1 Limpeza**
   - remover variáveis irrelevantes
   - tratar *outliers* (corrigir, remover ou manter com justificativa)
   - tratar ausentes (excluir, imputar por média/mediana/moda)
   - corrigir inconsistências e remover duplicatas
-- [ ] **4.2 Transformação**
+- [x] **4.2 Transformação**
   - recodificar categóricas (variáveis *dummy*; cuidado com ordinais)
   - discretizar contínuas em faixas, se útil (amplitudes iguais, quantis)
   - decompor/agregar variáveis (ex.: data → ano/mês; criar índices)
   - transformações (log, √x) para normalizar ou estabilizar variância
   - padronização (*z-score*) ou min-max, quando necessário
-- [ ] **4.3 Base analítica final** – salvar versão limpa separada da bruta
-- [ ] **4.4 Documentar e automatizar** – funções/script para cada transformação (reprodutibilidade)
+- [x] **4.3 Base analítica final** – salvar versão limpa separada da bruta
+- [x] **4.4 Documentar e automatizar** – funções/script para cada transformação (reprodutibilidade)
 
 **Entregável:** base limpa + script de preparação + log das decisões de limpeza.
 
@@ -129,8 +129,8 @@ O que **não** se transfere ao pé da letra:
 | 0. Gerenciamento        | 19/11 | 19/11 | ✅ |
 | 1. Definir o Problema   | 19/11 | 19/11 | ✅ |
 | 2. Obter os Dados       | 20/11 | 20/11 | ✅ |
-| 3. Análise Exploratória | 20/11 | 20/11 | ⬜ |
-| 4. Preparar os Dados    | 20/11 | 21/11 | ⬜ |
+| 3. Análise Exploratória | 20/11 | 20/11 | ✅ |
+| 4. Preparar os Dados    | 20/11 | 21/11 | ✅ |
 | 5. Modelagem            | 21/11 | 22/11 | ⬜ |
 | 6. Validar e Refinar    | 22/11 | 22/11 | ⬜ |
 | 7. Comunicar Resultados | 22/11 | 24/11 | ⬜ |

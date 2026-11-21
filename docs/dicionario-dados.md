@@ -64,19 +64,22 @@
 
 ---
 
-## 2. Base Analítica Consolidada (`data/processed/`) — Estrutura Prevista
+## 2. Base Analítica Consolidada (`data/processed/base_analitica.{csv,rds}`, EAP 4.3)
 
-Tabela mensal final usada nos modelos (os valores de $k$ e a inclusão final de cada variável serão fechados na Etapa 3 — decisões **D05**, **D14**, **D20** e **D27**).
+Gerada por `Rscript R/03_preparar_dados.R` (202 meses: `2010-01` a `2026-10`, sem valores ausentes).
 
-| Nome (sugestão) | Descrição | Tipo | Unidade | Valores possíveis | Regra de construção |
+| Nome | Descrição | Tipo | Unidade | Valores possíveis | Regra de construção |
 |---|---|---|---|---|---|
-| `ano_mes` | Mês de referência da observação | Data | `AAAA-MM` | `2010-01` a `2026-10` (~202 meses) | Índice mensal contínuo (D26) |
-| `ena_mwmed` | ENA bruta média mensal da bacia do Rio Grande | Quantitativa contínua | MWmed | Reais $> 0$ (sem `NA`) | Média mensal dos valores diários do ONS; transformação a avaliar (D05) |
-| `oni_lag_k` | Índice ONI defasado em $k$ meses | Quantitativa contínua | °C | Reais (tipicamente −2,5 a +2,6) | `ANOM` convertido para mês central e defasado em $k$ meses (D14) |
-| `precip_mm_lag_k` | Precipitação mensal agregada da bacia defasada em $k$ meses | Quantitativa contínua | mm | Reais $\ge 0$ (ou reais positivos/negativos, se agregada como anomalia) | Soma mensal por estação → agregação entre estações (D27) → lag $k$ (D20) |
-| `temp_c_lag_k` | Temperatura média mensal da bacia defasada em $k$ meses | Quantitativa contínua | °C | Reais (tipicamente 10 a 35 °C, ou anomalia em °C) | Média mensal por estação → agregação entre estações → lag $k$ (D20) |
-| `umid_pct_lag_k` | Umidade relativa média mensal da bacia defasada em $k$ meses | Quantitativa contínua | % | Reais de `0` a `100` (ou anomalia em p.p.) | Média mensal por estação → agregação entre estações → lag $k$ (D20) |
-| `mes_02` … `mes_12` | Variáveis indicadoras (*dummies*) do mês do ano | Qualitativa binária | — | `0` ou `1` (referência: janeiro) | Criadas a partir de `ano_mes`; inclusão sujeita à análise de multicolinearidade (D20) |
+| `ano_mes` | Mês de referência da observação | Data | `AAAA-MM` | `2010-01` a `2026-10` (202 meses) | Índice mensal contínuo (D26) |
+| `ano`, `mes` | Ano e mês numérico extraídos de `ano_mes` | Quantitativa discreta | — | `2010`–`2026`; `1`–`12` | Decomposição temporal de `ano_mes` |
+| `conjunto` | Partição da série para modelagem e avaliação cega | Qualitativa nominal | — | `"treino"` (`2010-01` a `2025-10`, $n=190$) ou `"teste"` (`2025-11` a `2026-10`, $n=12$) | Separação treino/teste (D08, D30) |
+| `ena_mwmed` | ENA bruta média mensal da bacia do Rio Grande | Quantitativa contínua | MWmed | Reais $> 0$ (sem `NA`) | Média mensal dos valores diários do ONS (D05, D28) |
+| `log_ena` | Logaritmo natural da ENA bruta mensal | Quantitativa contínua | $\ln(\text{MWmed})$ | Reais (sem `NA`) | `log(ena_mwmed)` para normalizar e estabilizar variância (D32) |
+| `oni_lag4`, `oni_lag5` | Índice ONI defasado em 4 e 5 meses | Quantitativa contínua | °C | Reais (sem `NA`) | `ANOM` pelo mês central (D24) com defasagens de 4 e 5 meses (D33) |
+| `precip_mm_h_lag1`, `precip_mm_h_lag2` | Precipitação horária média mensal da bacia defasada em 1 e 2 meses | Quantitativa contínua | mm/h | Reais $\ge 0$ (sem `NA`) | Média simples das estações com $\ge 75\%$ de horas válidas (D35, D36) com *lags* 1 e 2 (D34) |
+| `umid_pct_lag1` | Umidade relativa média mensal da bacia defasada em 1 mês | Quantitativa contínua | % | Reais em $[0, 100]$ (sem `NA`) | Média simples das estações válidas (D35, D36) com *lag* 1 (D34) |
+| `temp_c_lag1`, `temp_c_lag2` | Temperatura média mensal da bacia defasada em 1 e 2 meses | Quantitativa contínua | °C | Reais (sem `NA`) | Média simples das estações válidas (D35, D36) com *lags* 1 e 2 (D34) |
+| `mes_02` … `mes_12` | Variáveis indicadoras (*dummies*) do mês do ano | Qualitativa binária | — | `0` ou `1` (referência: janeiro) | Criadas a partir de `mes` (D34, D38) |
 
 ---
 
