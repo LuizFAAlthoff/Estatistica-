@@ -11,6 +11,10 @@
 #   modelos_treino.rds       lista com todos os modelos ajustados no treino
 #   resumo_modelos_treino.csv  tabela comparativa de ajuste no treino (AIC, BIC, EAM, RMSE)
 #
+# Inclui a regressão com erros ARIMA (D42), que trata a autocorrelação dos
+# resíduos da regressão comum. A busca exaustiva da ordem ARIMA leva alguns
+# minutos (o script inteiro, cerca de 8 minutos).
+#
 # Regra D30: usa EXCLUSIVAMENTE conjunto == "treino" (2010-01 a 2025-10, n = 190).
 # O conjunto de teste não é lido, impresso nem avaliado neste script.
 # =============================================================================
@@ -71,6 +75,60 @@ anova_oni_vs_completa      <- anova(
   reg_completa
 )
 
+# --- 3b. Regressão com erros ARIMA (D42) -------------------------------------
+# A regressão comum deixa resíduos autocorrelacionados (05_diagnostico_residuos.R):
+# a bacia tem "memória" (secas e cheias persistem por meses) que o clima do mês
+# anterior não captura. Aqui o erro da regressão passa a seguir um ARIMA.
+#   1) ponto de partida: as variáveis da regressão selecionada na D39;
+#   2) a ordem do erro é escolhida pelo auto.arima (sem diferença sazonal, porque
+#      as dummies de mês já cuidam da sazonalidade);
+#   3) com a ordem fixa, elimina-se variável por variável enquanto o AIC cair
+#      (mesmo critério da D39), por máxima verossimilhança;
+#   4) a ordem é conferida de novo com o conjunto final.
+message("== Ajustando a regressão com erros ARIMA (D42) ==")
+vars_d39 <- attr(terms(reg_step_log), "term.labels")
+xreg_de  <- function(v) as.matrix(treino[, v, drop = FALSE])
+
+regarima_ini <- auto.arima(ts_log, xreg = xreg_de(vars_d39), D = 0,
+                           stepwise = FALSE, approximation = FALSE)
+ord_ini <- arimaorder(regarima_ini)
+ajusta_regarima <- function(v, ord) {
+  Arima(ts_log, order = ord[1:3],
+        seasonal = list(order = if (length(ord) > 3) ord[4:6] else c(0, 0, 0), period = 12),
+        xreg = xreg_de(v), method = "ML")
+}
+
+vars_regarima <- vars_d39
+log_elim <- data.frame(removida = character(0), AIC_antes = numeric(0), AIC_depois = numeric(0))
+repeat {
+  aic_atual <- AIC(ajusta_regarima(vars_regarima, ord_ini))
+  cand <- sapply(vars_regarima, function(v) AIC(ajusta_regarima(setdiff(vars_regarima, v), ord_ini)))
+  if (min(cand) >= aic_atual) break
+  sai <- names(which.min(cand))
+  log_elim <- rbind(log_elim, data.frame(removida = sai, AIC_antes = aic_atual, AIC_depois = min(cand)))
+  vars_regarima <- setdiff(vars_regarima, sai)
+}
+
+regarima_conf <- auto.arima(ts_log, xreg = xreg_de(vars_regarima), D = 0,
+                            stepwise = FALSE, approximation = FALSE)
+ord_final <- arimaorder(regarima_conf)
+if (!identical(unname(ord_final), unname(ord_ini))) {
+  message("  Aviso: a ordem do erro mudou com o conjunto final (",
+          paste(ord_ini, collapse = ","), " -> ", paste(ord_final, collapse = ","), ").")
+}
+mod_regarima <- ajusta_regarima(vars_regarima, ord_final)
+
+# Testes de razão de verossimilhança (mesma ordem de erro) para os objetivos 3 e 4
+teste_rv <- function(menor, maior) {
+  est <- 2 * (maior$loglik - menor$loglik)
+  gl  <- length(coef(maior)) - length(coef(menor))
+  data.frame(RV = est, gl = gl, p = pchisq(est, gl, lower.tail = FALSE),
+             AIC_menor = AIC(menor), AIC_maior = AIC(maior))
+}
+dummies_regarima <- grep("^mes_", vars_regarima, value = TRUE)
+rv_clima <- teste_rv(ajusta_regarima(dummies_regarima, ord_final), mod_regarima)
+rv_oni   <- teste_rv(mod_regarima, ajusta_regarima(c(vars_regarima, oni_vars <- c("oni_lag4", "oni_lag5")), ord_final))
+
 # --- 4. Aula 23: Suavização Exponencial (SES, Holt, HW Adit/Mult, ETS) -------
 message("== Ajustando modelos de Suavização Exponencial ==")
 mod_ses     <- ses(ts_ena, h = 12)
@@ -119,6 +177,9 @@ resumo <- rbind(
                reconv_log(fitted(reg_step_log), residuals(reg_step_log)), AIC(reg_step_log), BIC(reg_step_log), "Modelo selecionado (D17/D32)"),
   extrai_linha("Regressão: Stepwise AIC (MWmed)", "Regressão",
                fitted(reg_step_orig), AIC(reg_step_orig), BIC(reg_step_orig), "Escala original"),
+  extrai_linha(paste0("Regressão com erros ARIMA(", paste(ord_final[1:3], collapse = ","), ") (log)"), "Regressão",
+               reconv_log(fitted(mod_regarima), residuals(mod_regarima)), AIC(mod_regarima), BIC(mod_regarima),
+               "Clima defasado + dummies + erro ARIMA (D42)"),
   extrai_linha("SES (Simples)", "Suavização", fitted(mod_ses), mod_ses$model$aic, mod_ses$model$bic, "Sem tendência/sazonalidade"),
   extrai_linha("Holt", "Suavização", fitted(mod_holt), mod_holt$model$aic, mod_holt$model$bic, "Sem sazonalidade"),
   extrai_linha("Holt-Winters Aditivo", "Suavização", fitted(mod_hw_add), mod_hw_add$model$aic, mod_hw_add$model$bic, "Sazonalidade constante"),
@@ -147,6 +208,10 @@ modelos <- list(
   reg_completa  = reg_completa,
   reg_step_log  = reg_step_log,
   reg_step_orig = reg_step_orig,
+  regarima      = mod_regarima,
+  regarima_sel  = list(ordem_inicial = ord_ini, ordem_final = ord_final,
+                       eliminacao = log_elim, variaveis = vars_regarima,
+                       rv_clima = rv_clima, rv_oni = rv_oni),
   anovas        = list(
     clima_oni_vs_dummies = anova_clima_oni_vs_dummies,
     oni_vs_clima         = anova_oni_vs_clima,

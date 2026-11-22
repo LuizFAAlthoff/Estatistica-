@@ -5,7 +5,7 @@ Trabalho da disciplina **INE5649 – Técnicas Estatísticas de Predição** (UF
 **Grupo:** Bruno, Francisco, Jullya e Luiz
 **Entrega:** **24/11/2026**, resumo expandido em PDF no Moodle (só um integrante posta).
 
-> **Estado atual (22/11):** as etapas 1 a 4 estão concluídas, e a base analítica é gerada por `R/03_preparar_dados.R`. A etapa 5 está concluída: `R/04_modelagem.R` foi executado em 22/11 e ajustou todos os modelos no treino, com a regressão selecionada pelo AIC (D39). A avaliação no teste e as etapas 6 e 7 ainda não começaram.
+> **Estado atual (22/11):** as etapas 1 a 4 estão concluídas, e a base analítica é gerada por `R/03_preparar_dados.R`. A etapa 5 está concluída: `R/04_modelagem.R` ajustou todos os modelos no treino, com a regressão selecionada pelo AIC (D39) e com erros ARIMA (D42). Na etapa 6, o diagnóstico dos resíduos está feito (`R/05_diagnostico_residuos.R`); falta a avaliação no teste. A avaliação no teste e as etapas 6 e 7 ainda não começaram.
 
 ---
 
@@ -17,7 +17,7 @@ O grupo escolheu a **ENA – Energia Natural Afluente** da **bacia do Rio Grande
 
 ## 2. O que já foi decidido
 
-Cada decisão está registrada com alternativas e justificativa em **[docs/decisoes.md](docs/decisoes.md)** (D01–D41). Esse arquivo vai servir de base para a seção *Materiais e métodos*. Resumo:
+Cada decisão está registrada com alternativas e justificativa em **[docs/decisoes.md](docs/decisoes.md)** (D01–D42). Esse arquivo vai servir de base para a seção *Materiais e métodos*. Resumo:
 
 | Item | Decisão |
 |------|---------|
@@ -26,7 +26,7 @@ Cada decisão está registrada com alternativas e justificativa em **[docs/decis
 | Teste | Os **últimos 12 meses** (nov/2025 a out/2026) ficam separados e **cegos**: ninguém olha nem decide nada com base neles até a avaliação dos modelos (D30). Eles são previstos **um mês de cada vez**, por janela rolante (D41) |
 | Métricas | **EAM** (erro absoluto médio) e **RMSE** (raiz do erro quadrático médio) |
 | Modelos | Regressão; SES, Holt, Holt-Winters, ETS; AR, MA, ARIMA, SARIMA; mais o **ingênuo sazonal** como referência mínima |
-| Regressão | Usada para **previsão**, com variáveis **meteorológicas do INMET** e o índice **ONI** (El Niño) **com defasagem** (valores de meses anteriores) |
+| Regressão | Usada para **previsão**, com variáveis **meteorológicas do INMET** e o índice **ONI** (El Niño) **com defasagem** (valores de meses anteriores). O erro da regressão segue um ARIMA (D42). O ONI foi testado e não acrescentou (D39, D42) |
 | Ferramentas | **R** + **R Markdown** → DOCX → PDF (Arial 11, espaçamento 1,5, margens de 2 cm) |
 
 **Objetivos específicos**
@@ -38,9 +38,9 @@ Cada decisão está registrada com alternativas e justificativa em **[docs/decis
 
 ## 3. O que ainda está em aberto
 
-As escolhas de transformação, variáveis, defasagens e limpeza já foram feitas na análise exploratória e na preparação dos dados (D32–D38, D40). A regressão é selecionada pelo AIC, e o ONI saiu do modelo final (D39). A avaliação no teste será por **janela rolante de 1 mês**: os 12 meses são previstos um de cada vez, cada um com os dados até o mês anterior (D41). Continua em aberto:
+As escolhas de transformação, variáveis, defasagens e limpeza já foram feitas na análise exploratória e na preparação dos dados (D32–D38, D40). A regressão é selecionada pelo AIC e tem erros ARIMA, e o ONI saiu do modelo final (D39, D42). A avaliação no teste será por **janela rolante de 1 mês**: os 12 meses são previstos um de cada vez, cada um com os dados até o mês anterior (D41). Continua em aberto:
 
-- **Etapa 6:** os resíduos da regressão têm forte autocorrelação (Ljung-Box, D39), o que deixa os p-valores otimistas. Isso precisa ser tratado na validação dos pressupostos.
+- **Avaliação no teste (EAP 6.6):** prever os 12 meses por janela rolante (D41) e comparar EAM e RMSE.
 
 ## 4. Próximos passos
 

@@ -98,6 +98,33 @@ kable(tibble(Variavel = cont, VIF = round(vif, 1)), booktabs = TRUE,
 Box.test(residuals(modelos$reg_step_log), lag = 12, type = "Ljung-Box")
 ```
 
+### Regressão com erros ARIMA (D42)
+
+A regressão comum deixa resíduos autocorrelacionados (ver acima e `R/05_diagnostico_residuos.R`). Na regressão com erros ARIMA, o erro de um mês pode depender dos erros dos meses anteriores, o que captura a "memória" da bacia.
+
+```{r regarima}
+sel <- modelos$regarima_sel
+f   <- modelos$regarima
+cat("Ordem do erro ARIMA (p, d, q):", sel$ordem_final[1:3], "\n\n")
+
+kable(sel$eliminacao %>% mutate(across(where(is.numeric), ~ round(.x, 2))), booktabs = TRUE,
+      caption = "Eliminação pelo AIC a partir das variáveis da D39 (ordem do erro fixa)")
+
+z <- coef(f) / sqrt(diag(f$var.coef))
+kable(tibble(Termo = names(coef(f)), Estimativa = round(coef(f), 4),
+             EP = round(sqrt(diag(f$var.coef)), 4), z = round(z, 2),
+             p_valor = signif(2 * pnorm(-abs(z)), 3)),
+      booktabs = TRUE, caption = paste0("Regressão com erros ARIMA: coeficientes (AIC = ", round(AIC(f), 2), ")"))
+
+kable(bind_rows(
+        sel$rv_clima %>% mutate(Pergunta = "Objetivo 3: o clima acrescenta às dummies?"),
+        sel$rv_oni   %>% mutate(Pergunta = "Objetivo 4: o ONI acrescenta ao modelo?")) %>%
+        select(Pergunta, RV, gl, p, AIC_menor, AIC_maior) %>%
+        mutate(across(c(RV, AIC_menor, AIC_maior), ~ round(.x, 2)),
+               p = ifelse(p < 1e-4, "< 0,0001", formatC(p, digits = 3, format = "f", decimal.mark = ","))),
+      booktabs = TRUE, caption = "Testes da razão de verossimilhança (mesma ordem de erro)")
+```
+
 ## 5.3 Modelos de Suavização Exponencial (Treino)
 
 ```{r suavizacao}

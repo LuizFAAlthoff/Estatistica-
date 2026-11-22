@@ -101,10 +101,10 @@ O que **não** se transfere ao pé da letra:
 
 ## 6. Validar e Refinar *(Ajustar o Modelo)*
 
-- [ ] **6.1 Verificar pressupostos** – normalidade (Shapiro-Wilk, QQ-plot), homocedasticidade (Levene, Breusch-Pagan), independência, multicolinearidade (VIF)
-- [ ] **6.2 Diagnóstico de resíduos e pontos influentes** (se houver regressão)
-- [ ] **6.3 Seleção do modelo final** – AIC/BIC, R² ajustado, parcimônia
-- [ ] **6.4 Alternativas quando pressupostos falham** – testes não paramétricos, transformações, *bootstrap*
+- [x] **6.1 Verificar pressupostos** – normalidade (Shapiro-Wilk, QQ-plot), homocedasticidade (Levene, Breusch-Pagan), independência, multicolinearidade (VIF) *(feito em `R/05_diagnostico_residuos.R`: independência por Ljung-Box e normalidade por Shapiro-Wilk em todos os modelos; VIF da regressão em `notebooks/02_modelagem.Rmd`. A homocedasticidade não foi testada formalmente; o `log(ENA)` da D32 trata a variância)*
+- [x] **6.2 Diagnóstico de resíduos e pontos influentes** (se houver regressão) *(gráficos em `output/residuos_*.png`; só a regressão comum deixa padrão nos resíduos, D42)*
+- [x] **6.3 Seleção do modelo final** – AIC/BIC, R² ajustado, parcimônia *(regressão: AIC, D39 e D42)*
+- [x] **6.4 Alternativas quando pressupostos falham** – testes não paramétricos, transformações, *bootstrap* *(regressão com erros ARIMA, D42)*
 - [ ] **6.5 Correções e robustez** – comparações múltiplas (Bonferroni/Holm), análise de sensibilidade
 - [ ] **6.6 Validação preditiva** – previsão dos 12 meses de teste e cálculo de EAM e RMSE (D08, D09). Método: **janela rolante de 1 mês**, com o modelo congelado no treino (D41)
 
@@ -132,7 +132,7 @@ O que **não** se transfere ao pé da letra:
 | 3. Análise Exploratória | 20/11 | 20/11 | ✅ |
 | 4. Preparar os Dados    | 20/11 | 21/11 | ✅ |
 | 5. Modelagem            | 21/11 | 22/11 | ✅ |
-| 6. Validar e Refinar    | 22/11 | 22/11 | ⬜ |
+| 6. Validar e Refinar    | 22/11 | 22/11 | 🔄 |
 | 7. Comunicar Resultados | 22/11 | 24/11 | ⬜ |
 
 ## Estrutura de pastas sugerida
@@ -155,4 +155,4 @@ Todas as decisões estão em [docs/decisoes.md](docs/decisoes.md).
 
 ## Pendências / Perguntas em aberto
 
-Ver o [README](README.md) (seção 3) e as pendências no final de [docs/decisoes.md](docs/decisoes.md): a autocorrelação dos resíduos da regressão, para a etapa 6.
+Ver o [README](README.md) (seção 3) e as pendências no final de [docs/decisoes.md](docs/decisoes.md): a avaliação no teste (6.6).
