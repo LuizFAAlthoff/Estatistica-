@@ -41,7 +41,9 @@ ts_log <- ts(treino$log_ena,   start = c(2010, 1), frequency = 12)
 calc_eam  <- function(obs, prev) mean(abs(obs - prev), na.rm = TRUE)
 calc_rmse <- function(obs, prev) sqrt(mean((obs - prev)^2, na.rm = TRUE))
 
-# Reconversão log -> MWmed com fator de correção de Smearing (evita viés de Jensen)
+# Reconversão log -> MWmed com fator de correção de Smearing (evita viés de Jensen).
+# Os resíduos precisam estar na escala log: no ETS de erro multiplicativo, use
+# residuals(..., type = "response"), porque o resíduo padrão dele é relativo.
 reconv_log <- function(ajuste_log, residuos_log) {
   smearing <- mean(exp(residuos_log), na.rm = TRUE)
   exp(ajuste_log) * smearing
@@ -186,7 +188,7 @@ resumo <- rbind(
   extrai_linha("Holt-Winters Multiplicativo", "Suavização", fitted(mod_hw_mult), mod_hw_mult$model$aic, mod_hw_mult$model$bic, "Sazonalidade proporcional"),
   extrai_linha(paste0("ETS (", mod_ets$method, ")"), "Suavização", fitted(mod_ets), AIC(mod_ets), BIC(mod_ets), "Automático (MWmed)"),
   extrai_linha(paste0("ETS log (", mod_ets_log$method, ")"), "Suavização",
-               reconv_log(fitted(mod_ets_log), residuals(mod_ets_log)), AIC(mod_ets_log), BIC(mod_ets_log), "Automático (log)"),
+               reconv_log(fitted(mod_ets_log), residuals(mod_ets_log, type = "response")), AIC(mod_ets_log), BIC(mod_ets_log), "Automático (log)"),
   extrai_linha(paste0("AR (", paste(arimaorder(mod_ar), collapse = ","), ") [log]"), "Box-Jenkins",
                reconv_log(fitted(mod_ar), residuals(mod_ar)), AIC(mod_ar), BIC(mod_ar), "Não sazonal"),
   extrai_linha(paste0("MA (", paste(arimaorder(mod_ma), collapse = ","), ") [log]"), "Box-Jenkins",

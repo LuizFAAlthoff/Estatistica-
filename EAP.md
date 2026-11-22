@@ -105,8 +105,8 @@ O que **não** se transfere ao pé da letra:
 - [x] **6.2 Diagnóstico de resíduos e pontos influentes** (se houver regressão) *(gráficos em `output/residuos_*.png`; só a regressão comum deixa padrão nos resíduos, D42)*
 - [x] **6.3 Seleção do modelo final** – AIC/BIC, R² ajustado, parcimônia *(regressão: AIC, D39 e D42)*
 - [x] **6.4 Alternativas quando pressupostos falham** – testes não paramétricos, transformações, *bootstrap* *(regressão com erros ARIMA, D42)*
-- [ ] **6.5 Correções e robustez** – comparações múltiplas (Bonferroni/Holm), análise de sensibilidade
-- [ ] **6.6 Validação preditiva** – previsão dos 12 meses de teste e cálculo de EAM e RMSE (D08, D09). Método: **janela rolante de 1 mês**, com o modelo congelado no treino (D41)
+- [ ] **6.5 Correções e robustez** – comparações múltiplas (Bonferroni/Holm), análise de sensibilidade *(há código em `R/05_validar_modelos.R`, ainda não conferido pelo grupo; ver pendências)*
+- [x] **6.6 Validação preditiva** – previsão dos 12 meses de teste e cálculo de EAM e RMSE (D08, D09). Método: **janela rolante de 1 mês**, com o modelo congelado no treino (D41) *(feito em `R/06_avaliacao_teste.R`: os 18 modelos superam o ingênuo sazonal; as regressões com clima lideram pelo RMSE, em torno de 1.040 MWmed, e a regressão com erros ARIMA (D42) tem o menor EAM, 528 MWmed. Fev/2026, um mês extremo, responde pela maior parte do erro quadrático de todos os modelos. Tabelas e gráficos em `output/*teste_rolante*`)*
 
 **Entregável:** resultados finais validados + justificativa do modelo escolhido.
 
@@ -155,4 +155,4 @@ Todas as decisões estão em [docs/decisoes.md](docs/decisoes.md).
 
 ## Pendências / Perguntas em aberto
 
-Ver o [README](README.md) (seção 3) e as pendências no final de [docs/decisoes.md](docs/decisoes.md): a avaliação no teste (6.6).
+Ver o [README](README.md) (seção 3) e as pendências no final de [docs/decisoes.md](docs/decisoes.md): o que fazer com `R/05_validar_modelos.R` e a redação (etapa 7).

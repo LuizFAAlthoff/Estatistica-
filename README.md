@@ -5,7 +5,7 @@ Trabalho da disciplina **INE5649 – Técnicas Estatísticas de Predição** (UF
 **Grupo:** Bruno, Francisco, Jullya e Luiz
 **Entrega:** **24/11/2026**, resumo expandido em PDF no Moodle (só um integrante posta).
 
-> **Estado atual (22/11):** as etapas 1 a 4 estão concluídas, e a base analítica é gerada por `R/03_preparar_dados.R`. A etapa 5 está concluída: `R/04_modelagem.R` ajustou todos os modelos no treino, com a regressão selecionada pelo AIC (D39) e com erros ARIMA (D42). Na etapa 6, o diagnóstico dos resíduos está feito (`R/05_diagnostico_residuos.R`); falta a avaliação no teste. A avaliação no teste e as etapas 6 e 7 ainda não começaram.
+> **Estado atual (22/11):** as etapas 1 a 4 estão concluídas, e a base analítica é gerada por `R/03_preparar_dados.R`. A etapa 5 está concluída: `R/04_modelagem.R` ajustou todos os modelos no treino, com a regressão selecionada pelo AIC (D39) e com erros ARIMA (D42). Na etapa 6, o diagnóstico dos resíduos (`R/05_diagnostico_residuos.R`) e a avaliação no teste por janela rolante (`R/06_avaliacao_teste.R`) estão feitos: todos os modelos superam o ingênuo sazonal, as regressões com clima lideram pelo RMSE e a regressão com erros ARIMA tem o menor EAM. Falta a etapa 7 (redação). A avaliação no teste e as etapas 6 e 7 ainda não começaram.
 
 ---
 
@@ -40,7 +40,8 @@ Cada decisão está registrada com alternativas e justificativa em **[docs/decis
 
 As escolhas de transformação, variáveis, defasagens e limpeza já foram feitas na análise exploratória e na preparação dos dados (D32–D38, D40). A regressão é selecionada pelo AIC e tem erros ARIMA, e o ONI saiu do modelo final (D39, D42). A avaliação no teste será por **janela rolante de 1 mês**: os 12 meses são previstos um de cada vez, cada um com os dados até o mês anterior (D41). Continua em aberto:
 
-- **Avaliação no teste (EAP 6.6):** prever os 12 meses por janela rolante (D41) e comparar EAM e RMSE.
+- **`R/05_validar_modelos.R`:** foi escrito antes da D41 e da D42 e avalia o teste com horizonte fixo de 12 meses. O grupo decide o que fica (ver pendências em `docs/decisoes.md`).
+- **Etapa 7:** redação do resumo expandido.
 
 ## 4. Próximos passos
 
