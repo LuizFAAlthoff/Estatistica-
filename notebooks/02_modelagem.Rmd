@@ -1,0 +1,123 @@
+---
+title: "Inferência e Modelagem (Treino) - ENA Bacia do Rio Grande"
+author: "Grupo INE5649 (Bruno, Francisco, Jullya e Luiz)"
+date: "2026-11-22"
+output:
+  pdf_document:
+    toc: true
+    latex_engine: xelatex
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+geometry: margin=2cm
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 7,
+  fig.height = 4,
+  out.width = "100%",
+  fig.align = "center"
+)
+
+library(tidyverse)
+library(forecast)
+library(knitr)
+
+modelos <- readRDS("../output/modelos_treino.rds")
+resumo  <- read_csv("../output/resumo_modelos_treino.csv", show_col_types = FALSE)
+```
+
+## 5.1 Técnicas Escolhidas por Objetivo
+
+- **Ingênuo Sazonal (`snaive`):** linha de base (D18).
+- **Regressão Linear Múltipla (`log_ena`):** testa se variáveis meteorológicas defasadas do INMET (Objetivo 3) e o índice ONI defasado (Objetivo 4) explicam e preveem a ENA, com e sem *dummies* mensais.
+- **Suavização Exponencial:** SES, Holt, Holt-Winters aditivo, Holt-Winters multiplicativo e ETS automático (escala original e `log`). SES e Holt servem de contraste técnico por não modelarem sazonalidade.
+- **Box-Jenkins:** AR(p), MA(q) e ARIMA(p,d,q) não sazonais (contraste técnico) e SARIMA(p,d,q)(P,D,Q)[12] em `log_ena` e `ena_mwmed`.
+
+*(Nota D30: todas as estimações abaixo usam exclusivamente o treino — 190 meses, jan/2010 a out/2025.)*
+
+## 5.2 Estimação e Testes na Regressão (Objetivos 3 e 4)
+
+### Coeficientes e Intervalos de Confiança (95%) — Regressão Stepwise AIC (`log_ena`)
+
+```{r coef-reg}
+s <- summary(modelos$reg_step_log)
+ic <- confint(modelos$reg_step_log, level = 0.95)
+
+tab_coef <- tibble(
+  Termo     = rownames(s$coefficients),
+  Estimativa = round(s$coefficients[, 1], 4),
+  EP         = round(s$coefficients[, 2], 4),
+  IC_inf     = round(ic[, 1], 4),
+  IC_sup     = round(ic[, 2], 4),
+  t_valor    = round(s$coefficients[, 3], 2),
+  p_valor    = signif(s$coefficients[, 4], 3)
+)
+
+kable(tab_coef, booktabs = TRUE,
+      caption = paste0("Regressão selecionada por AIC (R2 ajustado = ",
+                       round(s$adj.r.squared, 4), ")"))
+```
+
+### Testes F (ANOVA) entre Especificações Aninhadas
+
+```{r anova-reg}
+cat("1) Clima + ONI adicionam explicação além das dummies de mês?\n")
+print(modelos$anovas$clima_oni_vs_dummies)
+
+cat("\n2) ONI (lag 4 e 5) adiciona explicação além do clima do INMET?\n")
+print(modelos$anovas$oni_vs_clima)
+
+cat("\n3) ONI (lag 4 e 5) adiciona explicação além de clima + dummies de mês?\n")
+print(modelos$anovas$oni_vs_completa)
+```
+
+## 5.3 Modelos de Suavização Exponencial (Treino)
+
+```{r suavizacao}
+tab_suav <- tibble(
+  Modelo = c("SES", "Holt", "HW Aditivo", "HW Multiplicativo", "ETS (MWmed)", "ETS (log)"),
+  Especificacao = c(
+    modelos$ses$method,
+    modelos$holt$method,
+    modelos$hw_add$method,
+    modelos$hw_mult$method,
+    modelos$ets$method,
+    modelos$ets_log$method
+  ),
+  AIC = round(c(
+    modelos$ses$model$aic, modelos$holt$model$aic,
+    modelos$hw_add$model$aic, modelos$hw_mult$model$aic,
+    AIC(modelos$ets), AIC(modelos$ets_log)
+  ), 2)
+)
+
+kable(tab_suav, booktabs = TRUE, caption = "Especificações ajustadas de suavização exponencial")
+```
+
+## 5.4 Modelos Box-Jenkins: AR, MA, ARIMA e SARIMA (Treino)
+
+```{r box-jenkins}
+cat("--- AR(p) [log] ---\n");       print(modelos$ar)
+cat("\n--- MA(q) [log] ---\n");     print(modelos$ma)
+cat("\n--- ARIMA não sazonal [log] ---\n"); print(modelos$arima_ns)
+cat("\n--- SARIMA [log] ---\n");    print(modelos$sarima_log)
+cat("\n--- SARIMA [MWmed] ---\n");  print(modelos$sarima_orig)
+```
+
+## 5.5 Comparação Geral no Treino (Escala MWmed)
+
+```{r tabela-geral}
+resumo %>%
+  select(Modelo = modelo, Familia = familia, AIC, BIC, EAM_treino, RMSE_treino) %>%
+  arrange(RMSE_treino) %>%
+  kable(booktabs = TRUE,
+        caption = "Ajuste no conjunto de treino (ordenado por RMSE em MWmed)")
+```
+
+*(Observação: valores de AIC/BIC de modelos ajustados em `log_ena` não são diretamente comparáveis aos de modelos ajustados em `ena_mwmed`; use EAM e RMSE na escala MWmed para comparar famílias distintas.)*
