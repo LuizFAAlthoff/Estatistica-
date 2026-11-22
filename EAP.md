@@ -40,7 +40,7 @@ O que **não** se transfere ao pé da letra:
 - [x] **1.4 Hipóteses** – não haverá seção de hipóteses (D21)
 - [x] **1.5 Variáveis de interesse** – ENA bruta mensal em MWmed; explicativas: INMET e ONI defasados (D05, D07, D13)
 - [x] **1.6 Tipo de estudo** – observacional, longitudinal, dados secundários (D16)
-- [x] **1.7 Critérios de avaliação** – últimos 12 meses como teste; EAM e RMSE (D08, D09). O α ficou adiado para D17.
+- [x] **1.7 Critérios de avaliação** – últimos 12 meses como teste; EAM e RMSE (D08, D09). α = 5% nos testes F (D39).
 
 **Entregável:** *Documento de definição do problema* (1 página).
 
@@ -65,6 +65,8 @@ O que **não** se transfere ao pé da letra:
 - [x] **3.5 Análise bivariada** – correlações (Pearson/Spearman), tabelas de contingência, boxplots por grupo, dispersão
 - [x] **3.6 Insights e transformações promissoras** – o que sugere a exploração? Falta algum dado extra?
 
+*Feito em `notebooks/01_eda.Rmd`, só com o treino (D30). Decisões: D32 (modelar em `log(ENA)`), D33 (ONI com defasagem de 4 e 5 meses), D34 (chuva, umidade e temperatura defasadas e *dummies* de mês), D35 (média simples das 19 estações) e D40 (só estações da bacia; a Amazônia fica fora).*
+
 **Entregável:** notebook de EDA + resumo de achados (bullet points).
 
 ## 4. Preparar os Dados
@@ -83,19 +85,17 @@ O que **não** se transfere ao pé da letra:
 - [x] **4.3 Base analítica final** – salvar versão limpa separada da bruta
 - [x] **4.4 Documentar e automatizar** – funções/script para cada transformação (reprodutibilidade)
 
+*Feito em `R/03_preparar_dados.R`, que gera `data/processed/base_analitica.{csv,rds}` (202 meses, sem ausentes). Decisões: D36 (mínimo de 75% de horas válidas), D37 (manter extremos reais) e D38 (*dummies* de mês e escala das preditoras).*
+
 **Entregável:** base limpa + script de preparação + log das decisões de limpeza.
 
 ## 5. Inferência e Modelagem *(Treinar o Modelo)*
 
-- [ ] **5.1 Escolher as técnicas por pergunta de pesquisa** – ex.:
-  - comparar médias: teste t, ANOVA (ou Mann-Whitney, Kruskal-Wallis)
-  - associação entre categóricas: qui-quadrado, Fisher
-  - relação entre quantitativas: correlação, regressão linear
-  - resposta binária: regressão logística
-- [ ] **5.2 Estimação** – estimativas pontuais e intervalos de confiança
-- [ ] **5.3 Testes de hipótese** – estatística de teste, p-valor, decisão ao nível α
-- [ ] **5.4 Ajustar modelos candidatos** – mais de uma especificação, quando fizer sentido
-- [ ] **5.5 Comparar e interpretar** – tamanho de efeito, coeficientes, variáveis mais relevantes
+- [x] **5.1 Escolher as técnicas por objetivo** – ingênuo sazonal (D18); regressão em `log_ena` com clima e ONI defasados e *dummies* de mês; SES, Holt, Holt-Winters aditivo e multiplicativo, ETS; AR, MA, ARIMA e SARIMA (`notebooks/02_modelagem.Rmd`, seção 5.1)
+- [x] **5.2 Estimação** – coeficientes e intervalos de confiança de 95% da regressão *(executado em 22/11)*
+- [x] **5.3 Testes de hipótese** – testes t dos coeficientes e três testes F (ANOVA) para os objetivos 3 e 4, com α = 5%; seleção de variáveis só pelo AIC (D39) *(executado em 22/11)*
+- [x] **5.4 Ajustar modelos candidatos** – todos os modelos acima, só no treino *(`R/04_modelagem.R`, executado em 22/11)*
+- [x] **5.5 Comparar e interpretar** – comparação no treino por AIC, BIC, EAM e RMSE *(executado em 22/11; `output/resumo_modelos_treino.csv`)*; a comparação no teste fica na 6.6
 
 **Entregável:** notebook de análise com resultados de cada pergunta.
 
@@ -106,7 +106,7 @@ O que **não** se transfere ao pé da letra:
 - [ ] **6.3 Seleção do modelo final** – AIC/BIC, R² ajustado, parcimônia
 - [ ] **6.4 Alternativas quando pressupostos falham** – testes não paramétricos, transformações, *bootstrap*
 - [ ] **6.5 Correções e robustez** – comparações múltiplas (Bonferroni/Holm), análise de sensibilidade
-- [ ] **6.6 Validação preditiva** *(opcional, se o objetivo for prever)* – treino/teste ou validação cruzada
+- [ ] **6.6 Validação preditiva** – previsão dos 12 meses de teste e cálculo de EAM e RMSE (D08, D09). Método: **janela rolante de 1 mês**, com o modelo congelado no treino (D41)
 
 **Entregável:** resultados finais validados + justificativa do modelo escolhido.
 
@@ -131,7 +131,7 @@ O que **não** se transfere ao pé da letra:
 | 2. Obter os Dados       | 20/11 | 20/11 | ✅ |
 | 3. Análise Exploratória | 20/11 | 20/11 | ✅ |
 | 4. Preparar os Dados    | 20/11 | 21/11 | ✅ |
-| 5. Modelagem            | 21/11 | 22/11 | ⬜ |
+| 5. Modelagem            | 21/11 | 22/11 | ✅ |
 | 6. Validar e Refinar    | 22/11 | 22/11 | ⬜ |
 | 7. Comunicar Resultados | 22/11 | 24/11 | ⬜ |
 
@@ -155,4 +155,4 @@ Todas as decisões estão em [docs/decisoes.md](docs/decisoes.md).
 
 ## Pendências / Perguntas em aberto
 
-Ver o [README](README.md) (próximos passos) e as decisões adiadas D17 e D20 em [docs/decisoes.md](docs/decisoes.md).
+Ver o [README](README.md) (seção 3) e as pendências no final de [docs/decisoes.md](docs/decisoes.md): a autocorrelação dos resíduos da regressão, para a etapa 6.

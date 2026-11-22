@@ -77,6 +77,27 @@ cat("\n3) ONI (lag 4 e 5) adiciona explicação além de clima + dummies de mês
 print(modelos$anovas$oni_vs_completa)
 ```
 
+### Diagnóstico preliminar da regressão (detalhado na etapa 6)
+
+Multicolinearidade (VIF) das variáveis contínuas no modelo completo e autocorrelação dos resíduos do modelo selecionado. Os dois pesam na escolha do critério de seleção (D39).
+
+```{r diagnostico-preliminar}
+comp <- modelos$reg_completa
+X    <- model.matrix(comp)[, -1]
+cont <- c("oni_lag4", "oni_lag5", "precip_mm_h_lag1", "precip_mm_h_lag2",
+          "umid_pct_lag1", "temp_c_lag1", "temp_c_lag2")
+
+# VIF_j = 1 / (1 - R2_j), em que R2_j vem da regressão da variável j nas demais
+vif <- sapply(cont, function(j) {
+  1 / (1 - summary(lm(X[, j] ~ X[, setdiff(colnames(X), j)]))$r.squared)
+})
+kable(tibble(Variavel = cont, VIF = round(vif, 1)), booktabs = TRUE,
+      caption = "VIF das variáveis contínuas no modelo completo (treino)")
+
+# Ljung-Box: H0 = resíduos sem autocorrelação até o lag 12
+Box.test(residuals(modelos$reg_step_log), lag = 12, type = "Ljung-Box")
+```
+
 ## 5.3 Modelos de Suavização Exponencial (Treino)
 
 ```{r suavizacao}
