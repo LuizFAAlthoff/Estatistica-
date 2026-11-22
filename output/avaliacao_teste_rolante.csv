@@ -1,0 +1,19 @@
+"posicao","modelo","familia","EAM","RMSE","ganho_EAM_pct","ganho_RMSE_pct"
+1,"Regressão: só clima","Regressão",818.8,1039.6,46.8,44.6
+2,"Regressão com erros ARIMA(0,1,2) (D42)","Regressão",527.7,1043.2,65.7,44.4
+3,"Regressão: stepwise AIC (D39)","Regressão",788,1063.8,48.8,43.4
+4,"Regressão: clima + ONI","Regressão",874.3,1101.3,43.2,41.4
+5,"AR: ARIMA(4,0,0) [log]","Box-Jenkins",849.9,1187,44.8,36.8
+6,"SARIMA(1,0,1)(0,1,1)[12] [log]","Box-Jenkins",718.6,1232.5,53.3,34.4
+7,"ARIMA(2,0,2) [log]","Box-Jenkins",877.5,1246.1,43,33.6
+8,"MA: ARIMA(0,0,5) [log]","Box-Jenkins",936,1282.4,39.2,31.7
+9,"SARIMA(1,0,0)(0,1,2)[12] [MWmed]","Box-Jenkins",949.4,1320.7,38.3,29.7
+10,"ETS(M,N,M)","Suavização",699.2,1355.2,54.6,27.8
+11,"ETS(M,N,A) [log]","Suavização",721.4,1372.1,53.1,26.9
+12,"Regressão: stepwise AIC (MWmed)","Regressão",1044.7,1392.9,32.1,25.8
+13,"Holt-Winters multiplicativo","Suavização",690.9,1415.5,55.1,24.6
+14,"Regressão: só dummies","Regressão",1060.6,1420.8,31.1,24.3
+15,"Holt-Winters aditivo","Suavização",958.5,1456.9,37.7,22.4
+16,"SES","Suavização",1331,1685.5,13.5,10.2
+17,"Holt","Suavização",1341.3,1695.3,12.9,9.7
+18,"Ingênuo sazonal","Referência",1539.6,1877.8,0,0
