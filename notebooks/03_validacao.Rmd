@@ -1,0 +1,133 @@
+---
+title: "Validação, Diagnóstico e Avaliação no Teste - ENA Bacia do Rio Grande"
+author: "Grupo INE5649 (Bruno, Francisco, Jullya e Luiz)"
+date: "2026-11-22"
+output:
+  pdf_document:
+    toc: true
+    latex_engine: xelatex
+  html_document:
+    toc: true
+    toc_float: true
+    theme: flatly
+geometry: margin=2cm
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  fig.width = 7,
+  fig.height = 4,
+  out.width = "100%",
+  fig.align = "center"
+)
+
+library(tidyverse)
+library(forecast)
+library(knitr)
+
+base      <- readRDS("../data/processed/base_analitica.rds")
+modelos   <- readRDS("../output/modelos_treino.rds")
+validacao <- readRDS("../output/validacao_resultados.rds")
+
+treino <- base[base$conjunto == "treino", ]
+```
+
+## 6.1 Verificação de Pressupostos (Treino)
+
+### Regressão Linear Múltipla — Stepwise AIC (`log_ena`)
+
+```{r pressupostos-reg}
+dr <- validacao$diag_reg
+
+tab_press <- tibble(
+  Pressuposto = c("Normalidade (Shapiro-Wilk)", "Homocedasticidade (Breusch-Pagan)",
+                  "Independência lag 1 (Durbin-Watson)", "Independência lags 1-12 (Ljung-Box)"),
+  Estatistica = round(c(dr$shapiro$statistic, dr$bp$statistic,
+                        dr$dw$statistic, dr$lb$statistic), 4),
+  p_valor     = signif(c(dr$shapiro$p.value, dr$bp$p.value,
+                         dr$dw$p.value, dr$lb$p.value), 3)
+)
+
+kable(tab_press, booktabs = TRUE, caption = "Testes de pressupostos da regressão selecionada (treino)")
+
+tab_vif <- tibble(Termo = names(dr$vif), VIF = round(as.numeric(dr$vif), 2))
+kable(tab_vif, booktabs = TRUE, caption = "Fator de Inflação da Variância (VIF) - Multicolinearidade")
+```
+
+### Independência e Normalidade dos Resíduos (Séries Temporais)
+
+```{r pressupostos-ts}
+kable(validacao$diag_ts, booktabs = TRUE,
+      caption = "Testes de Ljung-Box (lag 12) e Shapiro-Wilk nos resíduos (treino)")
+```
+
+## 6.2 Diagnóstico de Resíduos e Pontos Influentes
+
+```{r diag-plots-reg, fig.height=5.5}
+par(mfrow = c(2, 2))
+plot(modelos$reg_step_log, which = c(1, 2, 3, 4))
+par(mfrow = c(1, 1))
+```
+
+```{r influentes}
+idx <- validacao$idx_influentes
+cat("Observações com Distância de Cook > 4/n (", round(validacao$diag_reg$corte_cook, 4), "):",
+    length(idx), "meses ->", paste(treino$ano_mes[idx], collapse = ", "), "\n")
+```
+
+```{r acf-residuos, fig.height=4.5}
+par(mfrow = c(1, 3))
+acf(residuals(modelos$reg_step_log), main = "ACF Resíduos: Regressão")
+acf(residuals(modelos$sarima_log),   main = "ACF Resíduos: SARIMA (log)")
+acf(residuals(validacao$mod_sarimax_log), main = "ACF Resíduos: SARIMAX (log)")
+par(mfrow = c(1, 1))
+```
+
+## 6.3, 6.4 e 6.5 Robustez, Alternativas e Sensibilidade
+
+Quando há autocorrelação residual na regressão OLS (comum em séries temporais), aplicam-se duas correções: (1) **erros-padrão robustos de Newey-West (HAC)** e ajuste de **Holm** para comparações múltiplas; (2) **Regressão com erros SARIMA (`SARIMAX`)**, combinando as variáveis climáticas selecionadas com a estrutura autorregressiva sazonal.
+
+```{r robustez}
+kable(validacao$tab_robustez, booktabs = TRUE,
+      caption = "Comparação de p-valores: OLS, ajuste de Holm e Newey-West (HAC)")
+
+cat("SARIMAX Clima (log) ajustado no treino:\n")
+print(validacao$mod_sarimax_log)
+
+cat("\nSensibilidade (Regressão sem pontos influentes): R2 ajustado =",
+    round(summary(validacao$reg_sem_infl)$adj.r.squared, 4),
+    "| R2 ajustado original =",
+    round(summary(modelos$reg_step_log)$adj.r.squared, 4), "\n")
+```
+
+## 6.6 Validação Preditiva no Conjunto de Teste Cego (nov/2025 a out/2026)
+
+```{r tabela-teste}
+kable(validacao$avaliacao_teste, booktabs = TRUE,
+      caption = "Ranking final no conjunto de teste (12 meses) - EAM e RMSE em MWmed")
+```
+
+```{r grafico-teste, fig.height=4.5}
+prev <- validacao$previsoes_teste
+top3 <- validacao$avaliacao_teste$Modelo[1:3]
+cols_plot <- unique(c("ena_real", "Ingênuo Sazonal (snaive)", top3))
+
+df_plot <- prev %>%
+  select(ano_mes, all_of(cols_plot)) %>%
+  mutate(data = as.Date(paste0(ano_mes, "-01"))) %>%
+  pivot_longer(-c(ano_mes, data), names_to = "Serie", values_to = "ENA") %>%
+  mutate(Serie = ifelse(Serie == "ena_real", "Observado (Real)", Serie))
+
+ggplot(df_plot, aes(data, ENA, color = Serie, linetype = Serie == "Observado (Real)")) +
+  geom_line(linewidth = 0.9) +
+  geom_point(size = 1.6) +
+  scale_linetype_manual(values = c("TRUE" = "solid", "FALSE" = "dashed"), guide = "none") +
+  labs(title = "Previsões vs. Observado no Conjunto de Teste (nov/2025 a out/2026)",
+       subtitle = "Top 3 modelos (menor RMSE) comparados ao Ingênuo Sazonal",
+       x = "Mês", y = "ENA bruta (MWmed)", color = "Série") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
